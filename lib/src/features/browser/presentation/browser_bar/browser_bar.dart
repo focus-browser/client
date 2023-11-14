@@ -33,14 +33,12 @@ class _BrowserToolbar extends ConsumerWidget {
         ref.watch(browserBarControllerProvider).isTopBrowserSelected;
     return Row(
       children: [
-        const Spacer(),
         PlatformIconButton(
-          icon: isVerticalSplit
-              ? const Icon(Icons.horizontal_split)
-              : const Icon(Icons.vertical_split),
+          icon: const Icon(Icons.navigate_before),
           onPressed: () => ref
-              .read(browserScreenIsVerticalSplitProvider.notifier)
-              .state = !isVerticalSplit,
+              .read(browserWidgetControllerProvider(isTopBrowserSelected)
+                  .notifier)
+              .goBack(),
         ),
         PlatformIconButton(
           icon: const Icon(Icons.navigate_next),
@@ -49,18 +47,23 @@ class _BrowserToolbar extends ConsumerWidget {
                   .notifier)
               .goForward(),
         ),
+        const Spacer(),
         PlatformTextButton(
           onPressed: () => ref
               .read(browserBarControllerProvider.notifier)
               .toggleSelectedBrowser(),
-          child: isTopBrowserSelected ? PlatformText('1') : PlatformText('2'),
+          child: isTopBrowserSelected
+              ? PlatformText('Top')
+              : PlatformText('Bottom'),
         ),
+        const Spacer(),
         PlatformIconButton(
-          icon: const Icon(Icons.navigate_before),
+          icon: isVerticalSplit
+              ? const Icon(Icons.horizontal_split)
+              : const Icon(Icons.vertical_split),
           onPressed: () => ref
-              .read(browserWidgetControllerProvider(isTopBrowserSelected)
-                  .notifier)
-              .goBack(),
+              .read(browserScreenIsVerticalSplitProvider.notifier)
+              .state = !isVerticalSplit,
         ),
         PlatformIconButton(
           icon: const Icon(Icons.keyboard_arrow_down),
