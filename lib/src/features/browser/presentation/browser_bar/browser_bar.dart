@@ -93,6 +93,7 @@ class _BrowserSearchBar extends ConsumerWidget {
             child: PlatformTextField(
               controller: browserWidgetController.textController,
               keyboardType: TextInputType.url,
+              autocorrect: false,
               onSubmitted: (value) => ref
                   .read(browserWidgetControllerProvider(isTopBrowserSelected)
                       .notifier)
