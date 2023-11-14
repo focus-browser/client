@@ -3,6 +3,7 @@ import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar
 import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BrowserScreen extends ConsumerWidget {
@@ -69,7 +70,7 @@ class BrowserScreen extends ConsumerWidget {
                     alignment: Alignment.bottomRight,
                     child: Opacity(
                       opacity: 0.25,
-                      child: IconButton(
+                      child: PlatformIconButton(
                         icon: const Icon(
                           Icons.keyboard_arrow_up,
                           color: Colors.black,

@@ -4,6 +4,7 @@ import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar
 import 'package:bouser/src/features/browser/presentation/browser_screen.dart';
 import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BrowserBar extends StatelessWidget {
@@ -33,7 +34,7 @@ class _BrowserToolbar extends ConsumerWidget {
     return Row(
       children: [
         const Spacer(),
-        IconButton(
+        PlatformIconButton(
           icon: isVerticalSplit
               ? const Icon(Icons.horizontal_split)
               : const Icon(Icons.vertical_split),
@@ -41,27 +42,27 @@ class _BrowserToolbar extends ConsumerWidget {
               .read(browserScreenIsVerticalSplitProvider.notifier)
               .state = !isVerticalSplit,
         ),
-        IconButton(
+        PlatformIconButton(
           icon: const Icon(Icons.navigate_next),
           onPressed: () => ref
               .read(browserWidgetControllerProvider(isTopBrowserSelected)
                   .notifier)
               .goForward(),
         ),
-        OutlinedButton(
+        PlatformTextButton(
           onPressed: () => ref
               .read(browserBarControllerProvider.notifier)
               .toggleSelectedBrowser(),
-          child: isTopBrowserSelected ? const Text('1') : const Text('2'),
+          child: isTopBrowserSelected ? PlatformText('1') : PlatformText('2'),
         ),
-        IconButton(
+        PlatformIconButton(
           icon: const Icon(Icons.navigate_before),
           onPressed: () => ref
               .read(browserWidgetControllerProvider(isTopBrowserSelected)
                   .notifier)
               .goBack(),
         ),
-        IconButton(
+        PlatformIconButton(
           icon: const Icon(Icons.keyboard_arrow_down),
           onPressed: () => ref
               .read(browserBarControllerProvider.notifier)
@@ -81,26 +82,29 @@ class _BrowserSearchBar extends ConsumerWidget {
         ref.watch(browserBarControllerProvider).isTopBrowserSelected;
     final browserWidgetController = ref
         .watch(browserWidgetControllerProvider(isTopBrowserSelected).notifier);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Sizes.p16),
-      child: TextField(
-        controller: browserWidgetController.textController,
-        decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: IconButton(
-            onPressed: () => ref
-                .read(browserWidgetControllerProvider(isTopBrowserSelected)
-                    .notifier)
-                .reload(),
-            icon: const Icon(Icons.refresh),
+    return Row(
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(left: Sizes.p16),
+            child: PlatformTextField(
+              controller: browserWidgetController.textController,
+              keyboardType: TextInputType.url,
+              onSubmitted: (value) => ref
+                  .read(browserWidgetControllerProvider(isTopBrowserSelected)
+                      .notifier)
+                  .loadUrl(value),
+            ),
           ),
         ),
-        keyboardType: TextInputType.url,
-        onSubmitted: (value) => ref
-            .read(
-                browserWidgetControllerProvider(isTopBrowserSelected).notifier)
-            .loadUrl(value),
-      ),
+        PlatformIconButton(
+          onPressed: () => ref
+              .read(browserWidgetControllerProvider(isTopBrowserSelected)
+                  .notifier)
+              .reload(),
+          icon: const Icon(Icons.refresh),
+        ),
+      ],
     );
   }
 }
