@@ -3,6 +3,8 @@ import 'package:bouser/src/common/app_sizes.dart';
 import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen.dart';
 import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget_controller.dart';
+import 'package:bouser/src/localization/string_hardcoded.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -83,32 +85,42 @@ class _BrowserSearchBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isTopBrowserSelected =
         ref.watch(browserBarControllerProvider).isTopBrowserSelected;
-    final browserWidgetController = ref
-        .watch(browserWidgetControllerProvider(isTopBrowserSelected).notifier);
-    return Row(
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(left: Sizes.p16),
-            child: PlatformTextField(
-              controller: browserWidgetController.textController,
-              keyboardType: TextInputType.url,
-              autocorrect: false,
-              onSubmitted: (value) => ref
-                  .read(browserWidgetControllerProvider(isTopBrowserSelected)
-                      .notifier)
-                  .loadUrl(value),
-            ),
-          ),
+    final selectedBrowserWidgetControllerProvider =
+        browserWidgetControllerProvider(isTopBrowserSelected);
+    final browserWidgetController =
+        ref.watch(selectedBrowserWidgetControllerProvider.notifier);
+    final browserWidgetState =
+        ref.watch(selectedBrowserWidgetControllerProvider);
+    return Padding(
+      padding: const EdgeInsets.only(
+          left: Sizes.p16, right: Sizes.p16, top: Sizes.p12),
+      child: PlatformSearchBar(
+        controller: browserWidgetController.textController,
+        hintText: 'Search or enter website name'.hardcoded,
+        material: (context, platform) => MaterialSearchBarData(
+          leading: const Icon(Icons.search),
+          trailing: [
+            browserWidgetState.isLoading
+                ? const IconButton(
+                    icon: Icon(Icons.cancel),
+                    onPressed: null,
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () => browserWidgetController.reload(),
+                  ),
+          ],
+          onSubmitted: (value) => browserWidgetController.loadUrl(value),
         ),
-        PlatformIconButton(
-          onPressed: () => ref
-              .read(browserWidgetControllerProvider(isTopBrowserSelected)
-                  .notifier)
-              .reload(),
-          icon: const Icon(Icons.refresh),
+        cupertino: (context, platform) => CupertinoSearchBarData(
+          keyboardType: TextInputType.url,
+          suffixIcon: browserWidgetState.isLoading
+              ? const Icon(CupertinoIcons.xmark)
+              : const Icon(CupertinoIcons.refresh),
+          onSuffixTap: () => browserWidgetController.reload(),
+          onSubmitted: (value) => browserWidgetController.loadUrl(value),
         ),
-      ],
+      ),
     );
   }
 }
