@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:bouser/src/common/app_sizes.dart';
+import 'package:bouser/src/common_widgets/more_menu_button.dart';
 import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen.dart';
 import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget_controller.dart';
@@ -30,46 +31,89 @@ class _BrowserToolbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isVerticalSplit = ref.watch(browserScreenIsVerticalSplitProvider);
     final isTopBrowserSelected =
         ref.watch(browserBarControllerProvider).isTopBrowserSelected;
     return Row(
       children: [
-        PlatformIconButton(
-          icon: const Icon(Icons.navigate_before),
-          onPressed: () => ref
-              .read(browserWidgetControllerProvider(isTopBrowserSelected)
-                  .notifier)
-              .goBack(),
+        Expanded(
+          child: PlatformIconButton(
+            icon: Icon(context.platformIcons.leftChevron),
+            onPressed: () => ref
+                .read(browserWidgetControllerProvider(isTopBrowserSelected)
+                    .notifier)
+                .goBack(),
+          ),
         ),
-        PlatformIconButton(
-          icon: const Icon(Icons.navigate_next),
-          onPressed: () => ref
-              .read(browserWidgetControllerProvider(isTopBrowserSelected)
-                  .notifier)
-              .goForward(),
+        Expanded(
+          child: PlatformIconButton(
+            icon: Icon(context.platformIcons.rightChevron),
+            onPressed: () => ref
+                .read(browserWidgetControllerProvider(isTopBrowserSelected)
+                    .notifier)
+                .goForward(),
+          ),
         ),
-        const Spacer(),
-        PlatformTextButton(
-          onPressed: () => ref
+        Expanded(
+          child: PlatformIconButton(
+            icon: Icon(context.platformIcons.share),
+            onPressed: () => (),
+          ),
+        ),
+        Expanded(
+          child: PlatformIconButton(
+            icon: Icon(context.platformIcons.delete),
+            onPressed: () => (),
+          ),
+        ),
+        const Expanded(
+          child: _BrowserMoreMenuButton(),
+        ),
+      ],
+    );
+  }
+}
+
+class _BrowserMoreMenuButton extends ConsumerWidget {
+  const _BrowserMoreMenuButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isVerticalSplit = ref.watch(browserScreenIsVerticalSplitProvider);
+    final isTopBrowserSelected =
+        ref.watch(browserBarControllerProvider).isTopBrowserSelected;
+    final screenState = (isVerticalSplit, isTopBrowserSelected);
+    return MoreMenuButton(
+      isCupertino: isCupertino(context),
+      itemBuilder: (context) => [
+        MoreMenuItem(
+          title: switch (screenState) {
+            (true, true) => 'Switch to Bottom Window',
+            (true, false) => 'Switch to Top Window',
+            (false, true) => 'Switch to Right Window',
+            (false, false) => 'Switch to Left Window',
+          },
+          iconData: switch (screenState) {
+            (true, true) => Icons.arrow_drop_down,
+            (true, false) => Icons.arrow_drop_up,
+            (false, true) => Icons.arrow_right,
+            (false, false) => Icons.arrow_left,
+          },
+          onTap: () => ref
               .read(browserBarControllerProvider.notifier)
               .toggleSelectedBrowser(),
-          child: isTopBrowserSelected
-              ? PlatformText('Top')
-              : PlatformText('Bottom'),
         ),
-        const Spacer(),
-        PlatformIconButton(
-          icon: isVerticalSplit
-              ? const Icon(Icons.horizontal_split)
-              : const Icon(Icons.vertical_split),
-          onPressed: () => ref
+        MoreMenuItem(
+          title: isVerticalSplit ? 'Split Vertically' : 'Split Horizontally',
+          iconData:
+              isVerticalSplit ? Icons.vertical_split : Icons.horizontal_split,
+          onTap: () => ref
               .read(browserScreenIsVerticalSplitProvider.notifier)
               .state = !isVerticalSplit,
         ),
-        PlatformIconButton(
-          icon: const Icon(Icons.keyboard_arrow_down),
-          onPressed: () => ref
+        MoreMenuItem(
+          title: 'Hide Toolbar',
+          iconData: Icons.keyboard_arrow_down,
+          onTap: () => ref
               .read(browserBarControllerProvider.notifier)
               .toggleBarVisibility(),
         ),
