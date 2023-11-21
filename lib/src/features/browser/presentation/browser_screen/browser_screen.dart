@@ -31,6 +31,7 @@ class BrowserScreen extends ConsumerWidget {
                     const Expanded(
                       child: BrowserWidget(isPrimaryBrowser: true),
                     ),
+                    if (screenSplitState != BrowserSplitState.none)
                       ConstrainedBox(
                         constraints: constraints,
                         child: const _SecondaryBrowserWidget(),

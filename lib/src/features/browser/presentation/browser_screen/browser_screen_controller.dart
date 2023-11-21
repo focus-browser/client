@@ -4,6 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class BrowserScreenController extends StateNotifier<BrowserScreenState> {
   BrowserScreenController(super.state);
 
+  void toggleSplitMode() {
+    state = state.copyWith(
+      split: state.split == BrowserSplitState.none
+          ? BrowserSplitState.vertical
+          : BrowserSplitState.none,
+    );
+  }
+
   void toggleSplitOrientation() {
     state = state.copyWith(
       split: state.split == BrowserSplitState.vertical
@@ -24,6 +32,7 @@ final browserScreenControllerProvider = StateNotifierProvider.autoDispose<
     BrowserScreenController, BrowserScreenState>((ref) {
   return BrowserScreenController(
     const BrowserScreenState(
+      split: BrowserSplitState.none,
       secondaryBrowserWidgetSize: 100.0,
     ),
   );

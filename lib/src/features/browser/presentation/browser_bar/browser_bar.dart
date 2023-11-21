@@ -79,6 +79,7 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
     return MoreMenuButton(
       isCupertino: isCupertino(context),
       itemBuilder: (context) => [
+        if (splitState != BrowserSplitState.none)
           MoreMenuItem(
             title: switch (screenState) {
               (true, true) => 'Switch to Bottom Window'.hardcoded,
@@ -96,6 +97,7 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
                 .read(browserBarControllerProvider.notifier)
                 .toggleSelectedBrowser(),
           ),
+        if (splitState != BrowserSplitState.none)
           MoreMenuItem(
             title: isVerticalSplit
                 ? 'Split Vertically'.hardcoded
@@ -107,8 +109,15 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
                 .toggleSplitOrientation(),
           ),
         MoreMenuItem(
+          title: splitState == BrowserSplitState.none
+              ? 'Split Screen'.hardcoded
+              : 'Close Secondary Screen'.hardcoded,
+          iconData: splitState == BrowserSplitState.none
+              ? Icons.splitscreen
+              : Icons.cancel,
           onTap: () => ref
               .read(browserScreenControllerProvider.notifier)
+              .toggleSplitMode(),
         ),
         MoreMenuItem(
           title: 'Hide Toolbar'.hardcoded,

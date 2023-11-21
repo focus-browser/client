@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 enum BrowserSplitState {
+  none,
   horizontal,
   vertical,
 }

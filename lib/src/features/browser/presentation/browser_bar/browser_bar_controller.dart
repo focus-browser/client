@@ -39,6 +39,9 @@ final isBarVisibleProvider = Provider.autoDispose<bool>((ref) {
 
 final isPrimaryBrowserSelectedProvider = Provider.autoDispose<bool>((ref) {
   final browserSplitState = ref.watch(browserSplitProvider);
+  if (browserSplitState == BrowserSplitState.none) {
+    return true;
+  }
   return ref.watch(browserBarControllerProvider).isPrimaryBrowserWidgetSelected;
 });
 
