@@ -108,9 +108,16 @@ class _BrowserBarUnhideButton extends ConsumerWidget {
       child: Opacity(
         opacity: 0.25,
         child: PlatformIconButton(
-          icon: const Icon(
-            Icons.keyboard_arrow_up,
-            color: Colors.black,
+          icon: Container(
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(Sizes.p16),
+            ),
+            padding: const EdgeInsets.all(Sizes.p4),
+            child: const Icon(
+              Icons.close_fullscreen,
+              color: Colors.white,
+            ),
           ),
           onPressed: () => ref
               .read(browserBarControllerProvider.notifier)

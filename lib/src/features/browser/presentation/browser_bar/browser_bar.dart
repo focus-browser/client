@@ -112,7 +112,7 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
         ),
         MoreMenuItem(
           title: 'Hide Toolbar'.hardcoded,
-          iconData: Icons.keyboard_arrow_down,
+          iconData: Icons.open_in_full,
           onTap: () => ref
               .read(browserBarControllerProvider.notifier)
               .toggleBarVisibility(),
