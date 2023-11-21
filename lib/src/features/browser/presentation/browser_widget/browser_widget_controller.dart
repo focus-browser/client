@@ -1,29 +1,28 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:flutter/widgets.dart';
+import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget_state.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BrowserWidgetController extends StateNotifier<AsyncValue<void>> {
-  BrowserWidgetController() : super(const AsyncData(null));
+class BrowserWidgetController extends StateNotifier<BrowserWidgetState> {
+  BrowserWidgetController(super.state);
 
-  InAppWebViewController? _webViewController;
-  final TextEditingController _textController = TextEditingController();
+  void setWebViewController(InAppWebViewController webViewController) {
+    state = state.copyWith(webViewController: webViewController);
+  }
 
-  TextEditingController get textController => _textController;
-
-  void setWebViewController(InAppWebViewController webViewController) =>
-      _webViewController = webViewController;
+  void updateUrl(String value) {
+    state = state.copyWith(currentUrl: value);
+  }
 
   void goBack() {
-    _webViewController?.goBack();
+    state.webViewController?.goBack();
   }
 
   void goForward() {
-    _webViewController?.goForward();
+    state.webViewController?.goForward();
   }
 
   void reload() {
-    _webViewController?.reload();
+    state.webViewController?.reload();
   }
 
   void loadUrl(String value) {
@@ -31,16 +30,16 @@ class BrowserWidgetController extends StateNotifier<AsyncValue<void>> {
     if (uri.scheme.isEmpty) {
       uri = Uri.parse("http://$value");
     }
-    _webViewController?.loadUrl(urlRequest: URLRequest(url: uri));
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
+    state.webViewController?.loadUrl(urlRequest: URLRequest(url: uri));
   }
 }
 
-final browserWidgetControllerProvider = StateNotifierProvider.autoDispose
-    .family<BrowserWidgetController, AsyncValue<void>, bool>(
-        (ref, _) => BrowserWidgetController());
+final browserWidgetsControllersProvider = StateNotifierProvider.family
+    .autoDispose<BrowserWidgetController, BrowserWidgetState, bool>((ref, _) {
+  return BrowserWidgetController(
+    const BrowserWidgetState(
+      webViewController: null,
+      currentUrl: '',
+    ),
+  );
+});

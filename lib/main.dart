@@ -1,4 +1,4 @@
-import 'package:bouser/src/features/browser/presentation/browser_screen.dart';
+import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

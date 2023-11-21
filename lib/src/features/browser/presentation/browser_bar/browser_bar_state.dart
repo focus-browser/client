@@ -4,19 +4,20 @@ import 'package:flutter/foundation.dart';
 class BrowserBarState {
   const BrowserBarState({
     required this.isBarVisible,
-    required this.isTopBrowserSelected,
+    required this.isPrimaryBrowserWidgetSelected,
   });
 
   final bool isBarVisible;
-  final bool isTopBrowserSelected;
+  final bool isPrimaryBrowserWidgetSelected;
 
   BrowserBarState copyWith({
     bool? isBarVisible,
-    bool? isTopBrowserSelected,
+    bool? isPrimaryBrowserWidgetSelected,
   }) {
     return BrowserBarState(
       isBarVisible: isBarVisible ?? this.isBarVisible,
-      isTopBrowserSelected: isTopBrowserSelected ?? this.isTopBrowserSelected,
+      isPrimaryBrowserWidgetSelected:
+          isPrimaryBrowserWidgetSelected ?? this.isPrimaryBrowserWidgetSelected,
     );
   }
 }
