@@ -71,33 +71,26 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final splitState = ref.watch(browserSplitProvider);
-    final isVerticalSplit = splitState == BrowserSplitState.vertical;
     final isPrimaryBrowserSelected =
         ref.watch(isPrimaryBrowserSelectedProvider);
-    final screenState = (isVerticalSplit, isPrimaryBrowserSelected);
+    final splitState = ref.watch(browserSplitProvider);
+    final isSplit = splitState != BrowserSplitState.none;
+    final isVerticalSplit = splitState == BrowserSplitState.vertical;
     return MoreMenuButton(
       isCupertino: isCupertino(context),
       itemBuilder: (context) => [
-        if (splitState != BrowserSplitState.none)
+        if (isSplit)
           MoreMenuItem(
-            title: switch (screenState) {
-              (true, true) => 'Switch to Bottom Window'.hardcoded,
-              (true, false) => 'Switch to Top Window'.hardcoded,
-              (false, true) => 'Switch to Right Window'.hardcoded,
-              (false, false) => 'Switch to Left Window'.hardcoded,
-            },
-            iconData: switch (screenState) {
-              (true, true) => Icons.arrow_drop_down,
-              (true, false) => Icons.arrow_drop_up,
-              (false, true) => Icons.arrow_right,
-              (false, false) => Icons.arrow_left,
-            },
+            title: isPrimaryBrowserSelected
+                ? 'Switch to Secondary Window'.hardcoded
+                : 'Switch to Primary Window'.hardcoded,
+            iconData:
+                isPrimaryBrowserSelected ? Icons.looks_two : Icons.looks_one,
             onTap: () => ref
                 .read(browserBarControllerProvider.notifier)
                 .toggleSelectedBrowser(),
           ),
-        if (splitState != BrowserSplitState.none)
+        if (isSplit)
           MoreMenuItem(
             title: isVerticalSplit
                 ? 'Split Vertically'.hardcoded
@@ -109,12 +102,10 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
                 .toggleSplitOrientation(),
           ),
         MoreMenuItem(
-          title: splitState == BrowserSplitState.none
-              ? 'Split Screen'.hardcoded
-              : 'Close Secondary Screen'.hardcoded,
-          iconData: splitState == BrowserSplitState.none
-              ? Icons.splitscreen
-              : Icons.cancel,
+          title: isSplit
+              ? 'Close Secondary Window'.hardcoded
+              : 'Split Screen'.hardcoded,
+          iconData: isSplit ? Icons.close : Icons.splitscreen,
           onTap: () => ref
               .read(browserScreenControllerProvider.notifier)
               .toggleSplitMode(),
