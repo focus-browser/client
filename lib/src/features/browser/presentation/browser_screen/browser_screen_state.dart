@@ -31,4 +31,20 @@ class BrowserScreenState {
           isPrimaryBrowserSelected ?? this.isPrimaryBrowserSelected,
     );
   }
+
+  @override
+  bool operator ==(covariant BrowserScreenState other) {
+    if (identical(this, other)) return true;
+
+    return other.split == split &&
+        other.secondaryBrowserWidgetSize == secondaryBrowserWidgetSize &&
+        other.isPrimaryBrowserSelected == isPrimaryBrowserSelected &&
+  }
+
+  @override
+  int get hashCode {
+    return split.hashCode ^
+        secondaryBrowserWidgetSize.hashCode ^
+        isPrimaryBrowserSelected.hashCode ^
+  }
 }

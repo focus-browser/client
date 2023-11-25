@@ -20,4 +20,15 @@ class BrowserWidgetState {
       currentUrl: currentUrl ?? this.currentUrl,
     );
   }
+
+  @override
+  bool operator ==(covariant BrowserWidgetState other) {
+    if (identical(this, other)) return true;
+
+    return other.webViewController == webViewController &&
+        other.currentUrl == currentUrl;
+  }
+
+  @override
+  int get hashCode => webViewController.hashCode ^ currentUrl.hashCode;
 }
