@@ -4,6 +4,7 @@ import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget.dart';
+import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,8 +29,13 @@ class BrowserScreen extends ConsumerWidget {
                       ? Axis.vertical
                       : Axis.horizontal,
                   children: [
-                    const Expanded(
-                      child: BrowserWidget(isPrimaryBrowser: true),
+                    Expanded(
+                      child: ProviderScope(
+                        overrides: [
+                          browserNumberProvider.overrideWith((ref) => 0),
+                        ],
+                        child: const BrowserWidget(),
+                      ),
                     ),
                     if (screenSplitState != BrowserSplitState.none)
                       ConstrainedBox(
@@ -75,8 +81,11 @@ class _SecondaryBrowserWidget extends ConsumerWidget {
                     dragHandleSize,
                     constraints.maxWidth - dragHandleSize,
                   ),
-            child: const BrowserWidget(
-              isPrimaryBrowser: false,
+            child: ProviderScope(
+              overrides: [
+                browserNumberProvider.overrideWith((ref) => 1),
+              ],
+              child: const BrowserWidget(),
             ),
           ),
           GestureDetector(

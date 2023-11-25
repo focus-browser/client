@@ -6,14 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class BrowserWidget extends ConsumerWidget {
   const BrowserWidget({
     super.key,
-    required this.isPrimaryBrowser,
   });
-
-  final bool isPrimaryBrowser;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(browserWidgetsControllersProvider(isPrimaryBrowser));
+    final browserNumber = ref.watch(browserNumberProvider);
+    ref.watch(browserControllersProvider(browserNumber));
     return InAppWebView(
       initialUrlRequest: URLRequest(url: Uri.parse("https://flutter.dev")),
       initialOptions: InAppWebViewGroupOptions(
@@ -22,18 +20,18 @@ class BrowserWidget extends ConsumerWidget {
         ),
       ),
       onWebViewCreated: (webViewController) => ref
-          .read(browserWidgetsControllersProvider(isPrimaryBrowser).notifier)
+          .read(browserControllersProvider(browserNumber).notifier)
           .setWebViewController(webViewController),
       onLoadStart: (controller, url) => ref
-          .read(browserWidgetsControllersProvider(isPrimaryBrowser).notifier)
+          .read(browserControllersProvider(browserNumber).notifier)
           .updateUrl(url.toString()),
       onLoadStop: (controller, url) => ref
-          .read(browserWidgetsControllersProvider(isPrimaryBrowser).notifier)
+          .read(browserControllersProvider(browserNumber).notifier)
           .updateUrl(url.toString()),
       onLoadError: (controller, url, code, message) =>
           debugPrint("url: $url, code: $code, message: $message"),
       onUpdateVisitedHistory: (controller, url, androidIsReload) => ref
-          .read(browserWidgetsControllersProvider(isPrimaryBrowser).notifier)
+          .read(browserControllersProvider(browserNumber).notifier)
           .updateUrl(url.toString()),
     );
   }

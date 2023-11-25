@@ -3,6 +3,7 @@ import 'package:bouser/src/common_widgets/more_menu_button.dart';
 import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
+import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget_controller.dart';
 import 'package:bouser/src/localization/string_hardcoded.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,20 +31,23 @@ class _BrowserToolbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final browserNumber = ref.watch(selectedBrowserNumberProvider);
     return Row(
       children: [
         Expanded(
           child: PlatformIconButton(
             icon: Icon(context.platformIcons.leftChevron),
-            onPressed: () =>
-                ref.read(selectedBrowserControllerProvider).goBack(),
+            onPressed: () => ref
+                .read(browserControllersProvider(browserNumber).notifier)
+                .goBack(),
           ),
         ),
         Expanded(
           child: PlatformIconButton(
             icon: Icon(context.platformIcons.rightChevron),
-            onPressed: () =>
-                ref.read(selectedBrowserControllerProvider).goForward(),
+            onPressed: () => ref
+                .read(browserControllersProvider(browserNumber).notifier)
+                .goForward(),
           ),
         ),
         Expanded(
@@ -73,6 +77,7 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isPrimaryBrowserSelected =
         ref.watch(isPrimaryBrowserSelectedProvider);
+    final isSwapped = ref.watch(primarySecondarySwappedProvider);
     final splitState = ref.watch(browserSplitProvider);
     final isSplit = splitState != BrowserSplitState.none;
     final isVerticalSplit = splitState == BrowserSplitState.vertical;
@@ -82,12 +87,12 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
         if (isSplit)
           MoreMenuItem(
             title: isPrimaryBrowserSelected
-                ? 'Switch to Secondary Window'.hardcoded
-                : 'Switch to Primary Window'.hardcoded,
+                ? 'Switch to Window 2'.hardcoded
+                : 'Switch to Window 1'.hardcoded,
             iconData:
                 isPrimaryBrowserSelected ? Icons.looks_two : Icons.looks_one,
             onTap: () => ref
-                .read(browserBarControllerProvider.notifier)
+                .read(browserScreenControllerProvider.notifier)
                 .toggleSelectedBrowser(),
           ),
         if (isSplit)
@@ -103,7 +108,7 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
           ),
         MoreMenuItem(
           title: isSplit
-              ? 'Close Secondary Window'.hardcoded
+              ? 'Close Window ${isSwapped ? 1 : 2}'.hardcoded
               : 'Split Screen'.hardcoded,
           iconData: isSplit ? Icons.close : Icons.splitscreen,
           onTap: () => ref
@@ -127,12 +132,11 @@ class _BrowserSearchBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final browserNumber = ref.watch(selectedBrowserNumberProvider);
+    final currentUrl = ref.watch(browserControllersProvider(browserNumber)
+        .select((value) => value.currentUrl));
     final textController = ref.watch(textEditingControllerProvider);
-    textController.text = ref.read(selectedBrowserCurrentUrlProvider);
-    ref.listen(
-      selectedBrowserCurrentUrlProvider,
-      (previous, next) => textController.text = next,
-    );
+    textController.text = currentUrl;
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -145,20 +149,24 @@ class _BrowserSearchBar extends ConsumerWidget {
           trailing: [
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: () =>
-                  ref.read(selectedBrowserControllerProvider).reload(),
+              onPressed: () => ref
+                  .read(browserControllersProvider(browserNumber).notifier)
+                  .reload(),
             ),
           ],
-          onSubmitted: (value) =>
-              ref.read(selectedBrowserControllerProvider).loadUrl(value),
+          onSubmitted: (value) => ref
+              .read(browserControllersProvider(browserNumber).notifier)
+              .loadUrl(value),
         ),
         cupertino: (context, platform) => CupertinoSearchBarData(
           keyboardType: TextInputType.url,
           suffixIcon: const Icon(CupertinoIcons.refresh),
-          onSuffixTap: () =>
-              ref.read(selectedBrowserControllerProvider).reload(),
-          onSubmitted: (value) =>
-              ref.read(selectedBrowserControllerProvider).loadUrl(value),
+          onSuffixTap: () => ref
+              .read(browserControllersProvider(browserNumber).notifier)
+              .reload(),
+          onSubmitted: (value) => ref
+              .read(browserControllersProvider(browserNumber).notifier)
+              .loadUrl(value),
         ),
       ),
     );

@@ -6,11 +6,15 @@ class BrowserWidgetController extends StateNotifier<BrowserWidgetState> {
   BrowserWidgetController(super.state);
 
   void setWebViewController(InAppWebViewController webViewController) {
-    state = state.copyWith(webViewController: webViewController);
+    state = state.copyWith(
+      webViewController: webViewController,
+    );
   }
 
   void updateUrl(String value) {
-    state = state.copyWith(currentUrl: value);
+    state = state.copyWith(
+      currentUrl: value,
+    );
   }
 
   void goBack() {
@@ -34,8 +38,12 @@ class BrowserWidgetController extends StateNotifier<BrowserWidgetState> {
   }
 }
 
-final browserWidgetsControllersProvider = StateNotifierProvider.family
-    .autoDispose<BrowserWidgetController, BrowserWidgetState, bool>((ref, _) {
+final browserNumberProvider = Provider.autoDispose<int>((ref) {
+  throw UnimplementedError();
+});
+
+final browserControllersProvider = StateNotifierProvider.family
+    .autoDispose<BrowserWidgetController, BrowserWidgetState, int>((ref, _) {
   return BrowserWidgetController(
     const BrowserWidgetState(
       webViewController: null,
