@@ -24,7 +24,7 @@ class BrowserScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isBarVisible = ref.watch(isBarVisibleProvider);
-    final screenSplitState = ref.watch(browserSplitProvider);
+    final screenSplitState = ref.watch(screenSplitProvider);
     final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
     final browserWidgetKeys = ref.watch(_browserWidgetKeysProvider);
     return Column(
@@ -75,8 +75,8 @@ class _SecondaryBrowserWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final size = ref.watch(secondaryBrowserWidgetSizeProvider);
-    final splitState = ref.watch(browserSplitProvider);
-    final isVerticalSplit = splitState == BrowserSplitState.vertical;
+    final isVerticalSplit =
+        ref.watch(screenSplitProvider) == BrowserSplitState.vertical;
     final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
     final browserWidgetKeys = ref.watch(_browserWidgetKeysProvider);
     return LayoutBuilder(builder: (context, constraints) {
@@ -135,9 +135,9 @@ class _BrowserBarUnhideButton extends ConsumerWidget {
         opacity: 0.25,
         child: PlatformIconButton(
           icon: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.black,
-              borderRadius: BorderRadius.circular(Sizes.p16),
+              shape: BoxShape.circle,
             ),
             padding: const EdgeInsets.all(Sizes.p4),
             child: const Icon(

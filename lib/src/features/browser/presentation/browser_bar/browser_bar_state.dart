@@ -3,16 +3,16 @@ import 'package:flutter/foundation.dart';
 @immutable
 class BrowserBarState {
   const BrowserBarState({
-    required this.isBarVisible,
+    required this.isVisible,
   });
 
-  final bool isBarVisible;
+  final bool isVisible;
 
   BrowserBarState copyWith({
-    bool? isBarVisible,
+    bool? isVisible,
   }) {
     return BrowserBarState(
-      isBarVisible: isBarVisible ?? this.isBarVisible,
+      isVisible: isVisible ?? this.isVisible,
     );
   }
 
@@ -20,9 +20,9 @@ class BrowserBarState {
   bool operator ==(covariant BrowserBarState other) {
     if (identical(this, other)) return true;
 
-    return other.isBarVisible == isBarVisible;
+    return other.isVisible == isVisible;
   }
 
   @override
-  int get hashCode => isBarVisible.hashCode;
+  int get hashCode => isVisible.hashCode;
 }

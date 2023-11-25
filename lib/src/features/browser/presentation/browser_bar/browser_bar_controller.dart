@@ -6,7 +6,7 @@ class BrowserBarController extends StateNotifier<BrowserBarState> {
 
   void toggleBarVisibility() {
     state = state.copyWith(
-      isBarVisible: !state.isBarVisible,
+      isVisible: !state.isVisible,
     );
   }
 }
@@ -16,12 +16,12 @@ final browserBarControllerProvider =
   (ref) {
     return BrowserBarController(
       const BrowserBarState(
-        isBarVisible: true,
+        isVisible: true,
       ),
     );
   },
 );
 
 final isBarVisibleProvider = Provider.autoDispose<bool>((ref) {
-  return ref.watch(browserBarControllerProvider).isBarVisible;
+  return ref.watch(browserBarControllerProvider).isVisible;
 });

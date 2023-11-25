@@ -10,6 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final _textEditingControllerProvider =
+    Provider.autoDispose<TextEditingController>((ref) {
+  final textEditingController = TextEditingController();
+  ref.onDispose(
+    () => textEditingController.dispose(),
+  );
+  return textEditingController;
+});
+
 class BrowserBar extends StatelessWidget {
   const BrowserBar({
     super.key,
@@ -78,13 +87,13 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
     final isPrimaryBrowserSelected =
         ref.watch(isPrimaryBrowserSelectedProvider);
     final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
-    final splitState = ref.watch(browserSplitProvider);
-    final isSplit = splitState != BrowserSplitState.none;
-    final isVerticalSplit = splitState == BrowserSplitState.vertical;
+    final screenSplitState = ref.watch(screenSplitProvider);
+    final isScreenSplit = screenSplitState != BrowserSplitState.none;
+    final isVerticalSplit = screenSplitState == BrowserSplitState.vertical;
     return MoreMenuButton(
       isCupertino: isCupertino(context),
       itemBuilder: (context) => [
-        if (isSplit)
+        if (isScreenSplit)
           MoreMenuItem(
             title: isPrimaryBrowserSelected
                 ? 'Switch to Window 2'.hardcoded
@@ -95,7 +104,7 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
                 .read(browserScreenControllerProvider.notifier)
                 .toggleSelectedBrowser(),
           ),
-        if (isSplit)
+        if (isScreenSplit)
           MoreMenuItem(
             title: isVerticalSplit
                 ? 'Split Vertically'.hardcoded
@@ -106,7 +115,7 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
                 .read(browserScreenControllerProvider.notifier)
                 .toggleSplitOrientation(),
           ),
-        if (isSplit)
+        if (isScreenSplit)
           MoreMenuItem(
             title: 'Swap Windows'.hardcoded,
             iconData: isVerticalSplit ? Icons.swap_vert : Icons.swap_horiz,
@@ -115,10 +124,10 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
                 .toggleSwappedBrowser(),
           ),
         MoreMenuItem(
-          title: isSplit
+          title: isScreenSplit
               ? 'Close Window ${isPrimaryBrowserSwapped ? 1 : 2}'.hardcoded
               : 'Split Screen'.hardcoded,
-          iconData: isSplit ? Icons.close : Icons.splitscreen,
+          iconData: isScreenSplit ? Icons.close : Icons.splitscreen,
           onTap: () => ref
               .read(browserScreenControllerProvider.notifier)
               .toggleSplitMode(),
@@ -143,7 +152,7 @@ class _BrowserSearchBar extends ConsumerWidget {
     final browserNumber = ref.watch(selectedBrowserNumberProvider);
     final currentUrl = ref.watch(browserControllersProvider(browserNumber)
         .select((value) => value.currentUrl));
-    final textController = ref.watch(textEditingControllerProvider);
+    final textController = ref.watch(_textEditingControllerProvider);
     textController.text = currentUrl;
 
     return Padding(
@@ -187,28 +196,17 @@ class _PrefixIcon extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isScreenSplit = ref.watch(browserSplitProvider);
-    final selectedBrowserNumber = ref.watch(selectedBrowserNumberProvider);
+    final isScreenSplit = ref.watch(screenSplitProvider);
+    final browserNumber = ref.watch(selectedBrowserNumberProvider);
     final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
-    final browserNumber = (isPrimaryBrowserSwapped
-            ? selectedBrowserNumber ^ 1
-            : selectedBrowserNumber) +
-        1;
+    final displayNumber =
+        (isPrimaryBrowserSwapped ? browserNumber ^ 1 : browserNumber) + 1;
     if (isScreenSplit == BrowserSplitState.none) {
       return Icon(context.platformIcons.search);
     } else {
-      return browserNumber == 1
+      return displayNumber == 1
           ? const Icon(Icons.looks_one)
           : const Icon(Icons.looks_two);
     }
   }
 }
-
-final textEditingControllerProvider =
-    Provider.autoDispose<TextEditingController>((ref) {
-  final textEditingController = TextEditingController();
-  ref.onDispose(
-    () => textEditingController.dispose(),
-  );
-  return textEditingController;
-});

@@ -59,7 +59,7 @@ final browserScreenControllerProvider = StateNotifierProvider.autoDispose<
   );
 });
 
-final browserSplitProvider = Provider.autoDispose<BrowserSplitState>((ref) {
+final screenSplitProvider = Provider.autoDispose<BrowserSplitState>((ref) {
   return ref.watch(browserScreenControllerProvider).split;
 });
 
