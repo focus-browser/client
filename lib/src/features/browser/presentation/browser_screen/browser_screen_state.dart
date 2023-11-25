@@ -12,16 +12,19 @@ class BrowserScreenState {
     required this.split,
     required this.secondaryBrowserWidgetSize,
     required this.isPrimaryBrowserSelected,
+    required this.isPrimaryBrowserSwapped,
   });
 
   final BrowserSplitState split;
   final double secondaryBrowserWidgetSize;
   final bool isPrimaryBrowserSelected;
+  final bool isPrimaryBrowserSwapped;
 
   BrowserScreenState copyWith({
     BrowserSplitState? split,
     double? secondaryBrowserWidgetSize,
     bool? isPrimaryBrowserSelected,
+    bool? isPrimaryBrowserSwapped,
   }) {
     return BrowserScreenState(
       split: split ?? this.split,
@@ -29,6 +32,8 @@ class BrowserScreenState {
           secondaryBrowserWidgetSize ?? this.secondaryBrowserWidgetSize,
       isPrimaryBrowserSelected:
           isPrimaryBrowserSelected ?? this.isPrimaryBrowserSelected,
+      isPrimaryBrowserSwapped:
+          isPrimaryBrowserSwapped ?? this.isPrimaryBrowserSwapped,
     );
   }
 
@@ -39,6 +44,7 @@ class BrowserScreenState {
     return other.split == split &&
         other.secondaryBrowserWidgetSize == secondaryBrowserWidgetSize &&
         other.isPrimaryBrowserSelected == isPrimaryBrowserSelected &&
+        other.isPrimaryBrowserSwapped == isPrimaryBrowserSwapped;
   }
 
   @override
@@ -46,5 +52,6 @@ class BrowserScreenState {
     return split.hashCode ^
         secondaryBrowserWidgetSize.hashCode ^
         isPrimaryBrowserSelected.hashCode ^
+        isPrimaryBrowserSwapped.hashCode;
   }
 }

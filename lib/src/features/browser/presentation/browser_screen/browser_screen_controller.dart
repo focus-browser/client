@@ -14,6 +14,7 @@ class BrowserScreenController extends StateNotifier<BrowserScreenState> {
       state = state.copyWith(
         split: BrowserSplitState.none,
         isPrimaryBrowserSelected: true,
+        isPrimaryBrowserSwapped: false,
       );
     }
   }
@@ -32,6 +33,12 @@ class BrowserScreenController extends StateNotifier<BrowserScreenState> {
     );
   }
 
+  void toggleSwappedBrowser() {
+    state = state.copyWith(
+      isPrimaryBrowserSwapped: !state.isPrimaryBrowserSwapped,
+    );
+  }
+
   void adjustWidgetSize(double dx, double dy) {
     final delta = state.split == BrowserSplitState.horizontal ? dx : dy;
     state = state.copyWith(
@@ -47,6 +54,7 @@ final browserScreenControllerProvider = StateNotifierProvider.autoDispose<
       split: BrowserSplitState.none,
       secondaryBrowserWidgetSize: 100.0,
       isPrimaryBrowserSelected: true,
+      isPrimaryBrowserSwapped: false,
     ),
   );
 });
@@ -63,7 +71,13 @@ final isPrimaryBrowserSelectedProvider = Provider.autoDispose<bool>((ref) {
   return ref.watch(browserScreenControllerProvider).isPrimaryBrowserSelected;
 });
 
+final isPrimaryBrowserSwappedProvider = Provider.autoDispose<bool>((ref) {
+  return ref.watch(browserScreenControllerProvider).isPrimaryBrowserSwapped;
+});
+
 final selectedBrowserNumberProvider = Provider.autoDispose<int>((ref) {
   final isPrimaryBrowserSelected = ref.watch(isPrimaryBrowserSelectedProvider);
+  final primarySecondaryBrowserSwapped =
+      ref.watch(isPrimaryBrowserSwappedProvider);
   return isPrimaryBrowserSelected ^ primarySecondaryBrowserSwapped ? 0 : 1;
 });

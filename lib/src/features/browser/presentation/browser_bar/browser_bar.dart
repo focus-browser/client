@@ -77,7 +77,7 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isPrimaryBrowserSelected =
         ref.watch(isPrimaryBrowserSelectedProvider);
-    final isSwapped = ref.watch(primarySecondarySwappedProvider);
+    final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
     final splitState = ref.watch(browserSplitProvider);
     final isSplit = splitState != BrowserSplitState.none;
     final isVerticalSplit = splitState == BrowserSplitState.vertical;
@@ -106,9 +106,17 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
                 .read(browserScreenControllerProvider.notifier)
                 .toggleSplitOrientation(),
           ),
+        if (isSplit)
+          MoreMenuItem(
+            title: 'Swap Windows'.hardcoded,
+            iconData: isVerticalSplit ? Icons.swap_vert : Icons.swap_horiz,
+            onTap: () => ref
+                .read(browserScreenControllerProvider.notifier)
+                .toggleSwappedBrowser(),
+          ),
         MoreMenuItem(
           title: isSplit
-              ? 'Close Window ${isSwapped ? 1 : 2}'.hardcoded
+              ? 'Close Window ${isPrimaryBrowserSwapped ? 1 : 2}'.hardcoded
               : 'Split Screen'.hardcoded,
           iconData: isSplit ? Icons.close : Icons.splitscreen,
           onTap: () => ref
@@ -145,7 +153,7 @@ class _BrowserSearchBar extends ConsumerWidget {
         controller: textController,
         hintText: 'Search or enter website name'.hardcoded,
         material: (context, platform) => MaterialSearchBarData(
-          leading: const Icon(Icons.search),
+          leading: const _PrefixIcon(),
           trailing: [
             IconButton(
               icon: const Icon(Icons.refresh),
@@ -160,6 +168,7 @@ class _BrowserSearchBar extends ConsumerWidget {
         ),
         cupertino: (context, platform) => CupertinoSearchBarData(
           keyboardType: TextInputType.url,
+          prefixIcon: const _PrefixIcon(),
           suffixIcon: const Icon(CupertinoIcons.refresh),
           onSuffixTap: () => ref
               .read(browserControllersProvider(browserNumber).notifier)
@@ -170,6 +179,28 @@ class _BrowserSearchBar extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class _PrefixIcon extends ConsumerWidget {
+  const _PrefixIcon();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isScreenSplit = ref.watch(browserSplitProvider);
+    final selectedBrowserNumber = ref.watch(selectedBrowserNumberProvider);
+    final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
+    final browserNumber = (isPrimaryBrowserSwapped
+            ? selectedBrowserNumber ^ 1
+            : selectedBrowserNumber) +
+        1;
+    if (isScreenSplit == BrowserSplitState.none) {
+      return Icon(context.platformIcons.search);
+    } else {
+      return browserNumber == 1
+          ? const Icon(Icons.looks_one)
+          : const Icon(Icons.looks_two);
+    }
   }
 }
 

@@ -9,6 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final _browserWidgetKeysProvider = Provider<List<GlobalKey>>((ref) {
+  return [
+    GlobalKey(),
+    GlobalKey(),
+  ];
+});
+
 class BrowserScreen extends ConsumerWidget {
   const BrowserScreen({
     super.key,
@@ -18,6 +25,8 @@ class BrowserScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isBarVisible = ref.watch(isBarVisibleProvider);
     final screenSplitState = ref.watch(browserSplitProvider);
+    final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
+    final browserWidgetKeys = ref.watch(_browserWidgetKeysProvider);
     return Column(
       children: [
         Expanded(
@@ -31,6 +40,9 @@ class BrowserScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: ProviderScope(
+                        key: !isPrimaryBrowserSwapped
+                            ? browserWidgetKeys.first
+                            : browserWidgetKeys.last,
                         overrides: [
                           browserNumberProvider.overrideWith((ref) => 0),
                         ],
@@ -65,6 +77,8 @@ class _SecondaryBrowserWidget extends ConsumerWidget {
     final size = ref.watch(secondaryBrowserWidgetSizeProvider);
     final splitState = ref.watch(browserSplitProvider);
     final isVerticalSplit = splitState == BrowserSplitState.vertical;
+    final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
+    final browserWidgetKeys = ref.watch(_browserWidgetKeysProvider);
     return LayoutBuilder(builder: (context, constraints) {
       return Stack(
         children: [
@@ -82,6 +96,9 @@ class _SecondaryBrowserWidget extends ConsumerWidget {
                     constraints.maxWidth - dragHandleSize,
                   ),
             child: ProviderScope(
+              key: isPrimaryBrowserSwapped
+                  ? browserWidgetKeys.first
+                  : browserWidgetKeys.last,
               overrides: [
                 browserNumberProvider.overrideWith((ref) => 1),
               ],
