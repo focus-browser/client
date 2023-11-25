@@ -19,6 +19,21 @@ final _textEditingControllerProvider =
   return textEditingController;
 });
 
+final _focusNodeProvider = Provider.autoDispose<FocusNode>((ref) {
+  final textController = ref.watch(_textEditingControllerProvider);
+  final focusNode = FocusNode();
+  ref.onDispose(() => focusNode.dispose());
+  focusNode.addListener(() {
+    if (focusNode.hasFocus) {
+      textController.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: textController.text.length,
+      );
+    }
+  });
+  return focusNode;
+});
+
 class BrowserBar extends StatelessWidget {
   const BrowserBar({
     super.key,
@@ -154,12 +169,14 @@ class _BrowserSearchBar extends ConsumerWidget {
         .select((value) => value.currentUrl));
     final textController = ref.watch(_textEditingControllerProvider);
     textController.text = currentUrl;
+    final focusNode = ref.watch(_focusNodeProvider);
 
     return Padding(
       padding: const EdgeInsets.only(
           left: Sizes.p16, right: Sizes.p16, top: Sizes.p12),
       child: PlatformSearchBar(
         controller: textController,
+        focusNode: focusNode,
         hintText: 'Search or enter website name'.hardcoded,
         material: (context, platform) => MaterialSearchBarData(
           leading: const _PrefixIcon(),
