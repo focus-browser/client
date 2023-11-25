@@ -194,6 +194,7 @@ class _BrowserSearchBar extends ConsumerWidget {
         ),
         cupertino: (context, platform) => CupertinoSearchBarData(
           keyboardType: TextInputType.url,
+          autocorrect: false,
           prefixIcon: const _PrefixIcon(),
           suffixIcon: const Icon(CupertinoIcons.refresh),
           onSuffixTap: () => ref
