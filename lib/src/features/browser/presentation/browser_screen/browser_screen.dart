@@ -1,10 +1,10 @@
 import 'package:bouser/src/common/app_sizes.dart';
+import 'package:bouser/src/features/browser/data/browser_repository.dart';
 import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar.dart';
 import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget.dart';
-import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,7 +44,9 @@ class BrowserScreen extends ConsumerWidget {
                             ? browserWidgetKeys.first
                             : browserWidgetKeys.last,
                         overrides: [
-                          browserNumberProvider.overrideWith((ref) => 0),
+                          browserWidgetNumberProvider.overrideWith((ref) => ref
+                              .read(browserRepositoryProvider)
+                              .createBrowser()),
                         ],
                         child: const BrowserWidget(),
                       ),
@@ -100,7 +102,8 @@ class _SecondaryBrowserWidget extends ConsumerWidget {
                   ? browserWidgetKeys.first
                   : browserWidgetKeys.last,
               overrides: [
-                browserNumberProvider.overrideWith((ref) => 1),
+                browserWidgetNumberProvider.overrideWith((ref) =>
+                    ref.read(browserRepositoryProvider).createBrowser()),
               ],
               child: const BrowserWidget(),
             ),

@@ -1,9 +1,9 @@
 import 'package:bouser/src/common/app_sizes.dart';
 import 'package:bouser/src/common_widgets/more_menu_button.dart';
+import 'package:bouser/src/features/browser/data/browser_repository.dart';
 import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
-import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget_controller.dart';
 import 'package:bouser/src/localization/string_hardcoded.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,17 +61,15 @@ class _BrowserToolbar extends ConsumerWidget {
         Expanded(
           child: PlatformIconButton(
             icon: Icon(context.platformIcons.leftChevron),
-            onPressed: () => ref
-                .read(browserControllersProvider(browserNumber).notifier)
-                .goBack(),
+            onPressed: () =>
+                ref.read(browserRepositoryProvider).goBack(browserNumber),
           ),
         ),
         Expanded(
           child: PlatformIconButton(
             icon: Icon(context.platformIcons.rightChevron),
-            onPressed: () => ref
-                .read(browserControllersProvider(browserNumber).notifier)
-                .goForward(),
+            onPressed: () =>
+                ref.read(browserRepositoryProvider).goForward(browserNumber),
           ),
         ),
         Expanded(
@@ -165,10 +163,10 @@ class _BrowserSearchBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final browserNumber = ref.watch(selectedBrowserNumberProvider);
-    final currentUrl = ref.watch(browserControllersProvider(browserNumber)
-        .select((value) => value.currentUrl));
     final textController = ref.watch(_textEditingControllerProvider);
-    textController.text = currentUrl;
+    ref
+        .watch(browserCurrentUrlProvider(browserNumber))
+        .whenData((value) => textController.text = value ?? '');
     final focusNode = ref.watch(_focusNodeProvider);
 
     return Padding(
@@ -183,26 +181,22 @@ class _BrowserSearchBar extends ConsumerWidget {
           trailing: [
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: () => ref
-                  .read(browserControllersProvider(browserNumber).notifier)
-                  .reload(),
+              onPressed: () =>
+                  ref.read(browserRepositoryProvider).reload(browserNumber),
             ),
           ],
-          onSubmitted: (value) => ref
-              .read(browserControllersProvider(browserNumber).notifier)
-              .loadUrl(value),
+          onSubmitted: (value) =>
+              ref.read(browserRepositoryProvider).openUrl(browserNumber, value),
         ),
         cupertino: (context, platform) => CupertinoSearchBarData(
           keyboardType: TextInputType.url,
           autocorrect: false,
           prefixIcon: const _PrefixIcon(),
           suffixIcon: const Icon(CupertinoIcons.refresh),
-          onSuffixTap: () => ref
-              .read(browserControllersProvider(browserNumber).notifier)
-              .reload(),
-          onSubmitted: (value) => ref
-              .read(browserControllersProvider(browserNumber).notifier)
-              .loadUrl(value),
+          onSuffixTap: () =>
+              ref.read(browserRepositoryProvider).reload(browserNumber),
+          onSubmitted: (value) =>
+              ref.read(browserRepositoryProvider).openUrl(browserNumber, value),
         ),
       ),
     );

@@ -1,7 +1,11 @@
-import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget_controller.dart';
+import 'package:bouser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final browserWidgetNumberProvider = Provider.autoDispose<int>((ref) {
+  throw UnimplementedError();
+});
 
 class BrowserWidget extends ConsumerWidget {
   const BrowserWidget({
@@ -10,8 +14,7 @@ class BrowserWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final browserNumber = ref.watch(browserNumberProvider);
-    ref.watch(browserControllersProvider(browserNumber));
+    final browserNumber = ref.watch(browserWidgetNumberProvider);
     return InAppWebView(
       initialUrlRequest: URLRequest(url: Uri.parse("https://flutter.dev")),
       initialOptions: InAppWebViewGroupOptions(
@@ -20,19 +23,19 @@ class BrowserWidget extends ConsumerWidget {
         ),
       ),
       onWebViewCreated: (webViewController) => ref
-          .read(browserControllersProvider(browserNumber).notifier)
-          .setWebViewController(webViewController),
+          .read(inAppWebViewBrowserRepositoryProvider)
+          .setController(browserNumber, webViewController),
       onLoadStart: (controller, url) => ref
-          .read(browserControllersProvider(browserNumber).notifier)
-          .updateUrl(url.toString()),
+          .read(inAppWebViewBrowserRepositoryProvider)
+          .updateCurrentUrl(browserNumber, url),
       onLoadStop: (controller, url) => ref
-          .read(browserControllersProvider(browserNumber).notifier)
-          .updateUrl(url.toString()),
-      onLoadError: (controller, url, code, message) =>
-          debugPrint("url: $url, code: $code, message: $message"),
+          .read(inAppWebViewBrowserRepositoryProvider)
+          .updateCurrentUrl(browserNumber, url),
+      onLoadError: (controller, url, code, message) => debugPrint(
+          "browserNumber: $browserNumber, url: $url, code: $code, message: $message"),
       onUpdateVisitedHistory: (controller, url, androidIsReload) => ref
-          .read(browserControllersProvider(browserNumber).notifier)
-          .updateUrl(url.toString()),
+          .read(inAppWebViewBrowserRepositoryProvider)
+          .updateCurrentUrl(browserNumber, url),
     );
   }
 }

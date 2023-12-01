@@ -1,3 +1,5 @@
+import 'package:bouser/src/features/browser/data/browser_repository.dart';
+import 'package:bouser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -55,10 +57,15 @@ void main() async {
           ],
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
-          home: const Scaffold(
+          home: Scaffold(
             body: SafeArea(
               child: ProviderScope(
-                child: BrowserScreen(),
+                overrides: [
+                  browserRepositoryProvider.overrideWith(
+                    (ref) => ref.read(inAppWebViewBrowserRepositoryProvider),
+                  ),
+                ],
+                child: const BrowserScreen(),
               ),
             ),
           ),
