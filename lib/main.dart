@@ -1,10 +1,12 @@
+import 'package:bouser/src/app.dart';
 import 'package:bouser/src/features/browser/data/browser_repository.dart';
 import 'package:bouser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository.dart';
-import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen.dart';
+import 'package:bouser/src/features/search_engine/data/search_engines_repository/fake_search_engines_repository.dart';
+import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
+import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/fake_user_search_engine_repository.dart';
+import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -43,32 +45,21 @@ void main() async {
         materialDarkTheme: materialDarkTheme,
         cupertinoLightTheme: cupertinoLightTheme,
         cupertinoDarkTheme: cupertinoDarkTheme,
-        builder: (context) => PlatformApp(
-          restorationScopeId: 'bouser',
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en', ''), // English, no country code
-          ],
-          onGenerateTitle: (BuildContext context) =>
-              AppLocalizations.of(context)!.appTitle,
-          home: Scaffold(
-            body: SafeArea(
-              child: ProviderScope(
-                overrides: [
-                  browserRepositoryProvider.overrideWith(
-                    (ref) => ref.read(inAppWebViewBrowserRepositoryProvider),
-                  ),
-                ],
-                child: const BrowserScreen(),
-              ),
+        builder: (context) => ProviderScope(
+          overrides: [
+            browserRepositoryProvider.overrideWith(
+              (ref) => ref.read(inAppWebViewBrowserRepositoryProvider),
             ),
-          ),
+            // TODO: Remove this override when we have a real repository
+            searchEnginesRepositoryProvider.overrideWith(
+              (ref) => FakeSearchEnginesRepository(),
+            ),
+            // TODO: Remove this override when we have a real repository
+            userSearchEngineRepositoryProvider.overrideWith(
+              (ref) => FakeUserSearchEngineRepository(),
+            ),
+          ],
+          child: const App(),
         ),
       ),
     ),

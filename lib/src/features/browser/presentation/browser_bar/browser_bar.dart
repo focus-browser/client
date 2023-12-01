@@ -5,10 +5,12 @@ import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:bouser/src/localization/string_hardcoded.dart';
+import 'package:bouser/src/routing/app_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 final _textEditingControllerProvider =
     Provider.autoDispose<TextEditingController>((ref) {
@@ -146,6 +148,11 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
               .toggleSplitMode(),
         ),
         MoreMenuItem(
+          title: 'Search Engines'.hardcoded,
+          iconData: PlatformIcons(context).search,
+          onTap: () => context.goNamed(AppRoutes.searchEngine.name),
+        ),
+        MoreMenuItem(
           title: 'Hide Toolbar'.hardcoded,
           iconData: Icons.open_in_full,
           onTap: () => ref
@@ -185,18 +192,19 @@ class _BrowserSearchBar extends ConsumerWidget {
                   ref.read(browserRepositoryProvider).reload(browserNumber),
             ),
           ],
-          onSubmitted: (value) =>
-              ref.read(browserRepositoryProvider).openUrl(browserNumber, value),
+          onSubmitted: (value) => ref
+              .read(browserBarControllerProvider.notifier)
+              .search(browserNumber, value),
         ),
         cupertino: (context, platform) => CupertinoSearchBarData(
-          keyboardType: TextInputType.url,
           autocorrect: false,
           prefixIcon: const _PrefixIcon(),
           suffixIcon: const Icon(CupertinoIcons.refresh),
           onSuffixTap: () =>
               ref.read(browserRepositoryProvider).reload(browserNumber),
-          onSubmitted: (value) =>
-              ref.read(browserRepositoryProvider).openUrl(browserNumber, value),
+          onSubmitted: (value) => ref
+              .read(browserBarControllerProvider.notifier)
+              .search(browserNumber, value),
         ),
       ),
     );
