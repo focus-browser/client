@@ -28,7 +28,7 @@ void main() async {
         textTheme: CupertinoTextThemeData(
           navActionTextStyle: darkDefaultCupertinoTheme
               .textTheme.navActionTextStyle
-              .copyWith(color: materialDarkTheme.primaryColor),
+              .copyWith(color: const Color(0xF0F9F9F9)),
           navLargeTitleTextStyle: darkDefaultCupertinoTheme
               .textTheme.navLargeTitleTextStyle
               .copyWith(color: const Color(0xF0F9F9F9)),
