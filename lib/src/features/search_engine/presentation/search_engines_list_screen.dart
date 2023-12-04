@@ -4,6 +4,7 @@ import 'package:bouser/src/features/search_engine/data/default_search_engines_re
 import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
 import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
 import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
+import 'package:bouser/src/features/search_engine/presentation/search_engines_list_screen_controller.dart';
 import 'package:bouser/src/localization/string_hardcoded.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,6 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final defaultSearchEngines = ref.watch(defaultSearchEnginesProvider);
-    final userSearchEngineId = ref.watch(_userSearchEngineIdProvider);
 
     if (isCupertino(context)) {
       return SliverToBoxAdapter(
@@ -70,11 +70,8 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
           hasLeading: false,
           children: [
             for (final searchEngine in defaultSearchEngines.values)
-              CupertinoListTile(
-                title: Text(searchEngine.name),
-                trailing: userSearchEngineId == searchEngine.id
-                    ? const Icon(CupertinoIcons.checkmark_alt)
-                    : null,
+              _SearchEngineListTile(
+                searchEngine: searchEngine,
               ),
           ],
         ),
@@ -93,11 +90,8 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
             }
             index--;
             final searchEngine = defaultSearchEngines.values.toList()[index];
-            return ListTile(
-              title: Text(searchEngine.name),
-              trailing: userSearchEngineId == searchEngine.id
-                  ? const Icon(Icons.check)
-                  : null,
+            return _SearchEngineListTile(
+              searchEngine: searchEngine,
             );
           },
           childCount: defaultSearchEngines.length + 1,
@@ -107,6 +101,42 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
         ),
       );
     }
+  }
+}
+
+class _SearchEngineListTile extends ConsumerWidget {
+  const _SearchEngineListTile({
+    required this.searchEngine,
+  });
+
+  final SearchEngine searchEngine;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userSearchEngineId = ref.watch(_userSearchEngineIdProvider);
+    final state = ref.watch(searchEnginesListScreenControllerProvider);
+
+    final trailingWidget = () {
+      if (userSearchEngineId == searchEngine.id) {
+        return isCupertino(context)
+            ? const Icon(CupertinoIcons.checkmark_alt)
+            : const Icon(Icons.check);
+      } else if (state.isLoading && state.asData?.value == searchEngine.id) {
+        return PlatformCircularProgressIndicator();
+      } else {
+        return null;
+      }
+    }();
+
+    return PlatformListTile(
+      title: PlatformText(searchEngine.name),
+      trailing: trailingWidget,
+      onTap: () => userSearchEngineId != searchEngine.id && !state.isLoading
+          ? ref
+              .read(searchEnginesListScreenControllerProvider.notifier)
+              .setUserSearchEngine(searchEngine.id)
+          : null,
+    );
   }
 }
 

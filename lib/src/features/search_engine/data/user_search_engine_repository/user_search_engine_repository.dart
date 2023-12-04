@@ -5,7 +5,7 @@ abstract class UserSearchEngineRepository {
   Future<SearchEngineId> fetchUserSearchEngineId();
   Stream<SearchEngineId> watchUserSearchEngineId();
 
-  Future<void> setUserSearchEngineId(SearchEngineId searchEngineId);
+  Future<bool> setUserSearchEngineId(SearchEngineId searchEngineId);
 }
 
 final userSearchEngineRepositoryProvider =

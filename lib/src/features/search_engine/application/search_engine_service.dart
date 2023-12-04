@@ -2,6 +2,7 @@ import 'package:bouser/src/features/browser/data/browser_repository.dart';
 import 'package:bouser/src/features/search_engine/data/default_search_engines_repository.dart';
 import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
 import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
+import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
 import 'package:bouser/src/utils/web_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +31,11 @@ class SearchEngineService {
     final url = isWebAddress(input)
         ? input
         : userSearchEngine.urlTemplate.replaceAll('{0}', input);
-    await browserRepository.openUrl(id, url);
+    return browserRepository.openUrl(id, url);
+  }
+
+  Future<bool> setUserSearchEngine(SearchEngineId id) {
+    return userSearchEngineRepository.setUserSearchEngineId(id);
   }
 }
 

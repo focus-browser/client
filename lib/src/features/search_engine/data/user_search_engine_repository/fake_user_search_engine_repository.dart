@@ -23,8 +23,9 @@ class FakeUserSearchEngineRepository extends UserSearchEngineRepository {
       _userSearchEngineIndex.stream;
 
   @override
-  Future<void> setUserSearchEngineId(SearchEngineId searchEngineId) async {
+  Future<bool> setUserSearchEngineId(SearchEngineId searchEngineId) async {
     await delay(addDelay);
     _userSearchEngineIndex.value = searchEngineId;
+    return Future.value(true);
   }
 }
