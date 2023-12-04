@@ -23,15 +23,13 @@ class AsyncValueWidget<T> extends StatelessWidget {
       error: (e, st) => SliverToBoxWrapper(
         wrap: wrapInSliver,
         child: Center(
-          child: Text('Error: $e'),
+          child: PlatformText('Error: $e'),
         ),
       ),
       loading: () => SliverToBoxWrapper(
         wrap: wrapInSliver,
         child: Center(
-          child: isCupertino(context)
-              ? const CupertinoActivityIndicator()
-              : const CircularProgressIndicator(),
+          child: PlatformCircularProgressIndicator(),
         ),
       ),
     );

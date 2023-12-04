@@ -21,8 +21,8 @@ class AsyncValuesWidget<T> extends StatelessWidget {
     if (values.any((value) => value is AsyncError)) {
       return SliverToBoxWrapper(
         wrap: wrapInSliver,
-        child: const Center(
-          child: Text('Error'),
+        child: Center(
+          child: PlatformText('Error'),
         ),
       );
     }
@@ -30,9 +30,7 @@ class AsyncValuesWidget<T> extends StatelessWidget {
       return SliverToBoxWrapper(
         wrap: wrapInSliver,
         child: Center(
-          child: isCupertino(context)
-              ? const CupertinoActivityIndicator()
-              : const CircularProgressIndicator(),
+          child: PlatformCircularProgressIndicator(),
         ),
       );
     }
