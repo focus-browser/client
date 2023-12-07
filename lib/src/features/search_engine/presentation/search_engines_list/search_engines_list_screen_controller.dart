@@ -31,6 +31,21 @@ class SearchEnginesListScreenController
   Future<void> toggleEditing() async {
     state = state.copyWith(isEditing: !state.isEditing);
   }
+
+  Future<bool> removeSearchEngine(SearchEngine searchEngine) async {
+    final loading = const AsyncLoading<SearchEngineId?>()
+        .copyWithPrevious(AsyncData(searchEngine.id));
+    state = state.copyWith(selectedSearchEngineId: loading);
+    final value = await AsyncValue.guard(() async {
+      final success =
+          await searchEngineService.removeSearchEngine(searchEngine);
+      return success
+          ? null
+          : throw Exception('Failed to remove search engine'.hardcoded);
+    });
+    state = state.copyWith(selectedSearchEngineId: value);
+    return !value.hasError;
+  }
 }
 
 final searchEnginesListScreenControllerProvider =

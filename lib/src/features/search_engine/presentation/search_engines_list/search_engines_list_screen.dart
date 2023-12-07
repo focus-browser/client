@@ -4,6 +4,7 @@ import 'package:bouser/src/features/search_engine/data/default_search_engines_re
 import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
 import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
 import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
+import 'package:bouser/src/features/search_engine/presentation/search_engines_list/search_engine_list_tile.dart';
 import 'package:bouser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen_controller.dart';
 import 'package:bouser/src/localization/string_hardcoded.dart';
 import 'package:bouser/src/routing/app_router.dart';
@@ -74,6 +75,7 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final defaultSearchEngines = ref.watch(defaultSearchEnginesProvider);
+    final userSearchEngineId = ref.watch(_userSearchEngineIdProvider);
     final state = ref.watch(searchEnginesListScreenControllerProvider);
 
     if (isCupertino(context)) {
@@ -85,8 +87,9 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
             for (final searchEngine in defaultSearchEngines.values)
               Opacity(
                 opacity: state.isEditing ? 0.5 : 1,
-                child: _SearchEngineListTile(
+                child: SearchEngineListTile(
                   searchEngine: searchEngine,
+                  isSelected: searchEngine.id == userSearchEngineId,
                 ),
               ),
           ],
@@ -108,8 +111,9 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
             final searchEngine = defaultSearchEngines.values.toList()[index];
             return Opacity(
               opacity: state.isEditing ? 0.5 : 1,
-              child: _SearchEngineListTile(
+              child: SearchEngineListTile(
                 searchEngine: searchEngine,
+                isSelected: searchEngine.id == userSearchEngineId,
               ),
             );
           },
@@ -123,51 +127,13 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
   }
 }
 
-class _SearchEngineListTile extends ConsumerWidget {
-  const _SearchEngineListTile({
-    required this.searchEngine,
-  });
-
-  final SearchEngine searchEngine;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final userSearchEngineId = ref.watch(_userSearchEngineIdProvider);
-    final state = ref.watch(searchEnginesListScreenControllerProvider);
-
-    final trailingWidget = () {
-      if (userSearchEngineId == searchEngine.id) {
-        return isCupertino(context)
-            ? const Icon(CupertinoIcons.checkmark_alt)
-            : const Icon(Icons.check);
-      } else if (state.selectedSearchEngineId.isLoading &&
-          state.selectedSearchEngineId.asData?.value == searchEngine.id) {
-        return PlatformCircularProgressIndicator();
-      } else {
-        return null;
-      }
-    }();
-
-    return PlatformListTile(
-      title: PlatformText(searchEngine.name),
-      trailing: trailingWidget,
-      onTap: userSearchEngineId != searchEngine.id &&
-              !state.selectedSearchEngineId.isLoading &&
-              !state.isEditing
-          ? () => ref
-              .read(searchEnginesListScreenControllerProvider.notifier)
-              .setUserSearchEngine(searchEngine.id)
-          : null,
-    );
-  }
-}
-
 class _CustomSearchEnginesList extends ConsumerWidget {
   const _CustomSearchEnginesList();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final searchEngines = ref.watch(_customSearchEnginesProvider);
+    final userSearchEngineId = ref.watch(_userSearchEngineIdProvider);
     final state = ref.watch(searchEnginesListScreenControllerProvider);
 
     if (searchEngines.isNotEmpty || state.isEditing) {
@@ -178,8 +144,10 @@ class _CustomSearchEnginesList extends ConsumerWidget {
             hasLeading: false,
             children: [
               for (final searchEngine in searchEngines.values)
-                _SearchEngineListTile(
+                SearchEngineListTile(
                   searchEngine: searchEngine,
+                  isSelected: searchEngine.id == userSearchEngineId,
+                  isCustom: true,
                 ),
               if (state.isEditing)
                 CupertinoListTile(
@@ -207,8 +175,10 @@ class _CustomSearchEnginesList extends ConsumerWidget {
                 index--;
                 if (index < searchEngines.length) {
                   final searchEngine = searchEngines.values.toList()[index];
-                  return _SearchEngineListTile(
+                  return SearchEngineListTile(
                     searchEngine: searchEngine,
+                    isSelected: searchEngine.id == userSearchEngineId,
+                    isCustom: true,
                   );
                 }
                 if (state.isEditing) {
