@@ -4,12 +4,14 @@ import 'package:bouser/src/features/search_engine/data/default_search_engines_re
 import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
 import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
 import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
-import 'package:bouser/src/features/search_engine/presentation/search_engines_list_screen_controller.dart';
+import 'package:bouser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen_controller.dart';
 import 'package:bouser/src/localization/string_hardcoded.dart';
+import 'package:bouser/src/routing/app_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 final _userSearchEngineIdProvider = Provider<SearchEngineId>((ref) {
   throw UnimplementedError();
@@ -27,11 +29,21 @@ class SearchEnginesListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userSearchEngineId = ref.watch(userSearchEngineIdProvider);
     final customSearchEngines = ref.watch(searchEnginesProvider);
+    final state = ref.watch(searchEnginesListScreenControllerProvider);
     return PlatformScaffold(
       backgroundColor:
           isCupertino(context) ? CupertinoColors.systemGroupedBackground : null,
       appBar: PlatformAppBar(
         title: PlatformText('Search Engines'.hardcoded),
+        trailingActions: [
+          PlatformTextButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => ref
+                  .read(searchEnginesListScreenControllerProvider.notifier)
+                  .toggleEditing(),
+              child: PlatformText(
+                  state.isEditing ? 'Done'.hardcoded : 'Edit'.hardcoded))
+        ],
       ),
       body: SafeArea(
         child: AsyncValuesWidget(
@@ -62,6 +74,7 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final defaultSearchEngines = ref.watch(defaultSearchEnginesProvider);
+    final state = ref.watch(searchEnginesListScreenControllerProvider);
 
     if (isCupertino(context)) {
       return SliverToBoxAdapter(
@@ -70,8 +83,11 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
           hasLeading: false,
           children: [
             for (final searchEngine in defaultSearchEngines.values)
-              _SearchEngineListTile(
-                searchEngine: searchEngine,
+              Opacity(
+                opacity: state.isEditing ? 0.5 : 1,
+                child: _SearchEngineListTile(
+                  searchEngine: searchEngine,
+                ),
               ),
           ],
         ),
@@ -90,8 +106,11 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
             }
             index--;
             final searchEngine = defaultSearchEngines.values.toList()[index];
-            return _SearchEngineListTile(
-              searchEngine: searchEngine,
+            return Opacity(
+              opacity: state.isEditing ? 0.5 : 1,
+              child: _SearchEngineListTile(
+                searchEngine: searchEngine,
+              ),
             );
           },
           childCount: defaultSearchEngines.length + 1,
@@ -121,7 +140,8 @@ class _SearchEngineListTile extends ConsumerWidget {
         return isCupertino(context)
             ? const Icon(CupertinoIcons.checkmark_alt)
             : const Icon(Icons.check);
-      } else if (state.isLoading && state.asData?.value == searchEngine.id) {
+      } else if (state.selectedSearchEngineId.isLoading &&
+          state.selectedSearchEngineId.asData?.value == searchEngine.id) {
         return PlatformCircularProgressIndicator();
       } else {
         return null;
@@ -131,8 +151,10 @@ class _SearchEngineListTile extends ConsumerWidget {
     return PlatformListTile(
       title: PlatformText(searchEngine.name),
       trailing: trailingWidget,
-      onTap: () => userSearchEngineId != searchEngine.id && !state.isLoading
-          ? ref
+      onTap: userSearchEngineId != searchEngine.id &&
+              !state.selectedSearchEngineId.isLoading &&
+              !state.isEditing
+          ? () => ref
               .read(searchEnginesListScreenControllerProvider.notifier)
               .setUserSearchEngine(searchEngine.id)
           : null,
@@ -145,10 +167,10 @@ class _CustomSearchEnginesList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userSearchEngineId = ref.watch(_userSearchEngineIdProvider);
     final searchEngines = ref.watch(_customSearchEnginesProvider);
+    final state = ref.watch(searchEnginesListScreenControllerProvider);
 
-    if (searchEngines.isNotEmpty) {
+    if (searchEngines.isNotEmpty || state.isEditing) {
       if (isCupertino(context)) {
         return SliverToBoxAdapter(
           child: CupertinoListSection(
@@ -156,17 +178,15 @@ class _CustomSearchEnginesList extends ConsumerWidget {
             hasLeading: false,
             children: [
               for (final searchEngine in searchEngines.values)
-                CupertinoListTile(
-                  title: Text(searchEngine.name),
-                  trailing: userSearchEngineId == searchEngine.id
-                      ? const Icon(CupertinoIcons.checkmark_alt)
-                      : null,
+                _SearchEngineListTile(
+                  searchEngine: searchEngine,
                 ),
-              // TODO: only in Edit mode
-              CupertinoListTile(
-                leading: const Icon(CupertinoIcons.add),
-                title: Text('Add'.hardcoded),
-              ),
+              if (state.isEditing)
+                CupertinoListTile(
+                  leading: const Icon(CupertinoIcons.add),
+                  title: Text('Add'.hardcoded),
+                  onTap: () => context.goNamed(AppRoutes.addSearchEngine.name),
+                ),
             ],
           ),
         );
@@ -185,15 +205,23 @@ class _CustomSearchEnginesList extends ConsumerWidget {
                   );
                 }
                 index--;
-                final searchEngine = searchEngines.values.toList()[index];
-                return ListTile(
-                  title: Text(searchEngine.name),
-                  trailing: userSearchEngineId == searchEngine.id
-                      ? const Icon(Icons.check)
-                      : null,
-                );
+                if (index < searchEngines.length) {
+                  final searchEngine = searchEngines.values.toList()[index];
+                  return _SearchEngineListTile(
+                    searchEngine: searchEngine,
+                  );
+                }
+                if (state.isEditing) {
+                  ListTile(
+                    leading: const Icon(Icons.add),
+                    title: Text('Add'.hardcoded),
+                    onTap: () =>
+                        context.goNamed(AppRoutes.addSearchEngine.name),
+                  );
+                }
+                return null;
               },
-              childCount: searchEngines.length + 1,
+              childCount: searchEngines.length + (state.isEditing ? 2 : 1),
             ),
             prototypeItem: ListTile(
               title: Text('Google'.hardcoded),

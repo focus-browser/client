@@ -30,12 +30,16 @@ class SearchEngineService {
 
     final url = isWebAddress(input)
         ? input
-        : userSearchEngine.urlTemplate.replaceAll('{0}', input);
+        : userSearchEngine.urlTemplate.replaceAll('%s', input);
     return browserRepository.openUrl(id, url);
   }
 
   Future<bool> setUserSearchEngine(SearchEngineId id) {
     return userSearchEngineRepository.setUserSearchEngineId(id);
+  }
+
+  Future<SearchEngineId?> addSearchEngine(String name, String urlTemplate) {
+    return searchEnginesRepository.addSearchEngine(name, urlTemplate);
   }
 }
 
