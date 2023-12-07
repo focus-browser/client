@@ -47,9 +47,7 @@ class SearchEngineListTile extends ConsumerWidget {
         searchEngine: searchEngine,
         isSelected: isSelected,
       ),
-      onTap: !isSelected &&
-              !state.selectedSearchEngineId.isLoading &&
-              !state.isEditing
+      onTap: !isSelected && !state.value.isLoading && !state.isEditing
           ? () => ref
               .read(searchEnginesListScreenControllerProvider.notifier)
               .setUserSearchEngine(searchEngine.id)
@@ -107,8 +105,7 @@ class _SearchEngineListTileTrailing extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(searchEnginesListScreenControllerProvider);
 
-    if (state.selectedSearchEngineId.isLoading &&
-        state.selectedSearchEngineId.asData?.value == searchEngine.id) {
+    if (state.value.isLoading && state.value.asData?.value == searchEngine.id) {
       return PlatformCircularProgressIndicator();
     } else if (isSelected) {
       return Opacity(

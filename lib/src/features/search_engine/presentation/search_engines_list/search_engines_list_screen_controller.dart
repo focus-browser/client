@@ -9,7 +9,7 @@ class SearchEnginesListScreenController
   SearchEnginesListScreenController({required this.searchEngineService})
       : super(SearchEnginesListScreenState(
           isEditing: false,
-          selectedSearchEngineId: const AsyncData(null),
+          value: const AsyncData(null),
         ));
 
   final SearchEngineService searchEngineService;
@@ -17,7 +17,7 @@ class SearchEnginesListScreenController
   Future<void> setUserSearchEngine(SearchEngineId id) async {
     final loading =
         const AsyncLoading<SearchEngineId?>().copyWithPrevious(AsyncData(id));
-    state = state.copyWith(selectedSearchEngineId: loading);
+    state = state.copyWith(value: loading);
 
     final value = await AsyncValue.guard(() async {
       final success = await searchEngineService.setUserSearchEngine(id);
@@ -25,7 +25,7 @@ class SearchEnginesListScreenController
           ? null
           : throw Exception('Failed to set user search engine'.hardcoded);
     });
-    state = state.copyWith(selectedSearchEngineId: value);
+    state = state.copyWith(value: value);
   }
 
   Future<void> toggleEditing() async {
@@ -35,7 +35,7 @@ class SearchEnginesListScreenController
   Future<bool> removeSearchEngine(SearchEngine searchEngine) async {
     final loading = const AsyncLoading<SearchEngineId?>()
         .copyWithPrevious(AsyncData(searchEngine.id));
-    state = state.copyWith(selectedSearchEngineId: loading);
+    state = state.copyWith(value: loading);
     final value = await AsyncValue.guard(() async {
       final success =
           await searchEngineService.removeSearchEngine(searchEngine);
@@ -43,7 +43,7 @@ class SearchEnginesListScreenController
           ? null
           : throw Exception('Failed to remove search engine'.hardcoded);
     });
-    state = state.copyWith(selectedSearchEngineId: value);
+    state = state.copyWith(value: value);
     return !value.hasError;
   }
 }
