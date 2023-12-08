@@ -1,10 +1,12 @@
+import 'package:bouser/src/app.dart';
 import 'package:bouser/src/features/browser/data/browser_repository.dart';
 import 'package:bouser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository.dart';
-import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen.dart';
+import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
+import 'package:bouser/src/features/search_engine/data/search_engines_repository/sembast_search_engines_repository.dart';
+import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/sembast_user_search_engine_repository.dart';
+import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,7 +28,7 @@ void main() async {
         textTheme: CupertinoTextThemeData(
           navActionTextStyle: darkDefaultCupertinoTheme
               .textTheme.navActionTextStyle
-              .copyWith(color: materialDarkTheme.primaryColor),
+              .copyWith(color: const Color(0xF0F9F9F9)),
           navLargeTitleTextStyle: darkDefaultCupertinoTheme
               .textTheme.navLargeTitleTextStyle
               .copyWith(color: const Color(0xF0F9F9F9)),
@@ -34,6 +36,13 @@ void main() async {
       ),
     ),
   );
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final searchEnginesRepository =
+      await SembastSearchEnginesRepository.makeDefault();
+  final userSearchEngineRepository =
+      await SembastUserSearchEngineRepository.makeDefault();
 
   runApp(
     PlatformProvider(
@@ -43,32 +52,25 @@ void main() async {
         materialDarkTheme: materialDarkTheme,
         cupertinoLightTheme: cupertinoLightTheme,
         cupertinoDarkTheme: cupertinoDarkTheme,
-        builder: (context) => PlatformApp(
-          restorationScopeId: 'bouser',
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en', ''), // English, no country code
-          ],
-          onGenerateTitle: (BuildContext context) =>
-              AppLocalizations.of(context)!.appTitle,
-          home: Scaffold(
-            body: SafeArea(
-              child: ProviderScope(
-                overrides: [
-                  browserRepositoryProvider.overrideWith(
-                    (ref) => ref.read(inAppWebViewBrowserRepositoryProvider),
-                  ),
-                ],
-                child: const BrowserScreen(),
-              ),
+        builder: (context) => ProviderScope(
+          overrides: [
+            browserRepositoryProvider.overrideWith(
+              (ref) => ref.read(inAppWebViewBrowserRepositoryProvider),
             ),
-          ),
+            searchEnginesRepositoryProvider.overrideWith(
+              (ref) {
+                ref.onDispose(() => searchEnginesRepository.dispose());
+                return searchEnginesRepository;
+              },
+            ),
+            userSearchEngineRepositoryProvider.overrideWith(
+              (ref) {
+                ref.onDispose(() => userSearchEngineRepository.dispose());
+                return userSearchEngineRepository;
+              },
+            ),
+          ],
+          child: const App(),
         ),
       ),
     ),

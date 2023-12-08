@@ -16,10 +16,21 @@ final _browserWidgetKeysProvider = Provider<List<GlobalKey>>((ref) {
   ];
 });
 
-class BrowserScreen extends ConsumerWidget {
-  const BrowserScreen({
-    super.key,
-  });
+class BrowserScreen extends StatelessWidget {
+  const BrowserScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PlatformScaffold(
+      body: const SafeArea(
+        child: _BrowserScreen(),
+      ),
+    );
+  }
+}
+
+class _BrowserScreen extends ConsumerWidget {
+  const _BrowserScreen();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
