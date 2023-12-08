@@ -32,13 +32,13 @@ class SearchEnginesListScreenController
     state = state.copyWith(isEditing: !state.isEditing);
   }
 
-  Future<bool> removeSearchEngine(SearchEngine searchEngine) async {
+  Future<bool> removeSearchEngine(SearchEngineId searchEngineId) async {
     final loading = const AsyncLoading<SearchEngineId?>()
-        .copyWithPrevious(AsyncData(searchEngine.id));
+        .copyWithPrevious(AsyncData(searchEngineId));
     state = state.copyWith(value: loading);
     final value = await AsyncValue.guard(() async {
       final success =
-          await searchEngineService.removeSearchEngine(searchEngine);
+          await searchEngineService.removeSearchEngine(searchEngineId);
       return success
           ? null
           : throw Exception('Failed to remove search engine'.hardcoded);

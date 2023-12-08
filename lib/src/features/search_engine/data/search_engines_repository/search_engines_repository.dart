@@ -5,8 +5,8 @@ abstract class SearchEnginesRepository {
   Future<Map<SearchEngineId, SearchEngine>> fetchSearchEngines();
   Stream<Map<SearchEngineId, SearchEngine>> watchSearchEngines();
 
-  Future<SearchEngineId?> addSearchEngine(String name, String urlTemplate);
-  Future<bool> removeSearchEngine(SearchEngine searchEngine);
+  Future<SearchEngineId?> addSearchEngine(SearchEngine searchEngine);
+  Future<bool> removeSearchEngine(SearchEngineId searchEngineId);
 }
 
 final searchEnginesRepositoryProvider =

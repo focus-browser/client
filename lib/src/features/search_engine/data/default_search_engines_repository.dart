@@ -3,12 +3,7 @@ import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DefaultSearchEnginesRepository {
-  final _searchEngines = {
-    for (var searchEngine in kDefaultSearchEngines)
-      searchEngine.id: searchEngine
-  };
-
-  Map<SearchEngineId, SearchEngine> get searchEngines => _searchEngines;
+  Map<SearchEngineId, SearchEngine> get searchEngines => kDefaultSearchEngines;
 }
 
 final defaultSearchEnginesRepositoryProvider =

@@ -3,7 +3,7 @@ import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
 import 'package:bouser/src/utils/delay.dart';
 import 'package:bouser/src/utils/in_memory_store.dart';
 
-class FakeSearchEnginesRepository extends SearchEnginesRepository {
+class FakeSearchEnginesRepository implements SearchEnginesRepository {
   FakeSearchEnginesRepository({
     this.addDelay = true,
   });
@@ -20,26 +20,21 @@ class FakeSearchEnginesRepository extends SearchEnginesRepository {
       _searchEngines.stream;
 
   @override
-  Future<SearchEngineId?> addSearchEngine(
-      String name, String urlTemplate) async {
+  Future<SearchEngineId?> addSearchEngine(SearchEngine searchEngine) async {
     await delay(addDelay);
-    final id = name;
+    final id = searchEngine.name;
     _searchEngines.value = {
       ..._searchEngines.value,
-      id: SearchEngine(
-        id: id,
-        name: name,
-        urlTemplate: urlTemplate,
-      ),
+      id: searchEngine,
     };
     return Future.value(id);
   }
 
   @override
-  Future<bool> removeSearchEngine(SearchEngine searchEngine) async {
+  Future<bool> removeSearchEngine(SearchEngineId searchEngineId) async {
     await delay(addDelay);
     final searchEngines = _searchEngines.value;
-    searchEngines.remove(searchEngine.id);
+    searchEngines.remove(searchEngineId);
     _searchEngines.value = searchEngines;
     return Future.value(true);
   }

@@ -84,12 +84,12 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
           header: Text('Default'.hardcoded),
           hasLeading: false,
           children: [
-            for (final searchEngine in defaultSearchEngines.values)
+            for (final searchEngine in defaultSearchEngines.entries)
               Opacity(
                 opacity: state.isEditing ? 0.5 : 1,
                 child: SearchEngineListTile(
-                  searchEngine: searchEngine,
-                  isSelected: searchEngine.id == userSearchEngineId,
+                  record: (id: searchEngine.key, engine: searchEngine.value),
+                  isSelected: searchEngine.key == userSearchEngineId,
                 ),
               ),
           ],
@@ -108,12 +108,12 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
               );
             }
             index--;
-            final searchEngine = defaultSearchEngines.values.toList()[index];
+            final searchEngine = defaultSearchEngines.entries.toList()[index];
             return Opacity(
               opacity: state.isEditing ? 0.5 : 1,
               child: SearchEngineListTile(
-                searchEngine: searchEngine,
-                isSelected: searchEngine.id == userSearchEngineId,
+                record: (id: searchEngine.key, engine: searchEngine.value),
+                isSelected: searchEngine.key == userSearchEngineId,
               ),
             );
           },
@@ -143,10 +143,10 @@ class _CustomSearchEnginesList extends ConsumerWidget {
             header: Text('Custom'.hardcoded),
             hasLeading: false,
             children: [
-              for (final searchEngine in searchEngines.values)
+              for (final searchEngine in searchEngines.entries)
                 SearchEngineListTile(
-                  searchEngine: searchEngine,
-                  isSelected: searchEngine.id == userSearchEngineId,
+                  record: (id: searchEngine.key, engine: searchEngine.value),
+                  isSelected: searchEngine.key == userSearchEngineId,
                   isCustom: true,
                 ),
               if (state.isEditing)
@@ -174,10 +174,10 @@ class _CustomSearchEnginesList extends ConsumerWidget {
                 }
                 index--;
                 if (index < searchEngines.length) {
-                  final searchEngine = searchEngines.values.toList()[index];
+                  final searchEngine = searchEngines.entries.toList()[index];
                   return SearchEngineListTile(
-                    searchEngine: searchEngine,
-                    isSelected: searchEngine.id == userSearchEngineId,
+                    record: (id: searchEngine.key, engine: searchEngine.value),
+                    isSelected: searchEngine.key == userSearchEngineId,
                     isCustom: true,
                   );
                 }

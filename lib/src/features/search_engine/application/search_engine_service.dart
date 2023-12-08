@@ -39,20 +39,25 @@ class SearchEngineService {
   }
 
   Future<SearchEngineId?> addSearchEngine(String name, String urlTemplate) {
-    return searchEnginesRepository.addSearchEngine(name, urlTemplate);
+    return searchEnginesRepository.addSearchEngine(
+      SearchEngine(
+        name: name,
+        urlTemplate: urlTemplate,
+      ),
+    );
   }
 
-  Future<bool> removeSearchEngine(SearchEngine searchEngine) async {
+  Future<bool> removeSearchEngine(SearchEngineId searchEngineId) async {
     final userSearchEngineId =
         await userSearchEngineRepository.fetchUserSearchEngineId();
-    if (searchEngine.id == userSearchEngineId) {
+    if (searchEngineId == userSearchEngineId) {
       final success = await setUserSearchEngine(
           defaultSearchEnginesRepository.searchEngines.keys.first);
       if (!success) {
-        return Future.value(false);
+        return false;
       }
     }
-    return searchEnginesRepository.removeSearchEngine(searchEngine);
+    return searchEnginesRepository.removeSearchEngine(searchEngineId);
   }
 }
 

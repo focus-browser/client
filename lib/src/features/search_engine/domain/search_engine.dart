@@ -1,15 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 typedef SearchEngineId = String;
+typedef SearchEngineRecord = ({SearchEngineId id, SearchEngine engine});
 
 @immutable
 class SearchEngine {
-  final SearchEngineId id;
   final String name;
   final String urlTemplate;
 
   const SearchEngine({
-    required this.id,
     required this.name,
     required this.urlTemplate,
   });
@@ -18,27 +19,31 @@ class SearchEngine {
   bool operator ==(covariant SearchEngine other) {
     if (identical(this, other)) return true;
 
-    return other.id == id &&
-        other.name == name &&
-        other.urlTemplate == urlTemplate;
+    return other.name == name && other.urlTemplate == urlTemplate;
   }
 
   @override
-  int get hashCode => id.hashCode ^ name.hashCode ^ urlTemplate.hashCode;
+  int get hashCode => name.hashCode ^ urlTemplate.hashCode;
 
-  SearchEngine copyWith({
-    String? id,
-    String? name,
-    String? urlTemplate,
-  }) {
+  @override
+  String toString() => 'SearchEngine(name: $name, urlTemplate: $urlTemplate)';
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'name': name,
+      'urlTemplate': urlTemplate,
+    };
+  }
+
+  factory SearchEngine.fromMap(Map<String, dynamic> map) {
     return SearchEngine(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      urlTemplate: urlTemplate ?? this.urlTemplate,
+      name: map['name'] as String,
+      urlTemplate: map['urlTemplate'] as String,
     );
   }
 
-  @override
-  String toString() =>
-      'SearchEngine(id: $id, name: $name, urlTemplate: $urlTemplate)';
+  String toJson() => json.encode(toMap());
+
+  factory SearchEngine.fromJson(String source) =>
+      SearchEngine.fromMap(json.decode(source) as Map<String, dynamic>);
 }

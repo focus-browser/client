@@ -10,12 +10,12 @@ import 'package:go_router/go_router.dart';
 class SearchEngineListTile extends ConsumerWidget {
   const SearchEngineListTile({
     super.key,
-    required this.searchEngine,
+    required this.record,
     required this.isSelected,
     this.isCustom = false,
   });
 
-  final SearchEngine searchEngine;
+  final SearchEngineRecord record;
   final bool isSelected;
   final bool isCustom;
 
@@ -36,21 +36,21 @@ class SearchEngineListTile extends ConsumerWidget {
                 showPlatformDialog(
                   context: context,
                   builder: (context) => _SearchEngineListTileDeleteDialog(
-                    searchEngine: searchEngine,
+                    record: record,
                   ),
                 );
               },
             )
           : null,
-      title: PlatformText(searchEngine.name),
+      title: PlatformText(record.engine.name),
       trailing: _SearchEngineListTileTrailing(
-        searchEngine: searchEngine,
+        searchEngineId: record.id,
         isSelected: isSelected,
       ),
       onTap: !isSelected && !state.value.isLoading && !state.isEditing
           ? () => ref
               .read(searchEnginesListScreenControllerProvider.notifier)
-              .setUserSearchEngine(searchEngine.id)
+              .setUserSearchEngine(record.id)
           : null,
     );
   }
@@ -58,17 +58,17 @@ class SearchEngineListTile extends ConsumerWidget {
 
 class _SearchEngineListTileDeleteDialog extends ConsumerWidget {
   const _SearchEngineListTileDeleteDialog({
-    required this.searchEngine,
+    required this.record,
   });
 
-  final SearchEngine searchEngine;
+  final SearchEngineRecord record;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PlatformAlertDialog(
       title: PlatformText('Delete'.hardcoded),
       content: PlatformText(
-          'Are you sure you want to delete ${searchEngine.name} search engine?'
+          'Are you sure you want to delete ${record.engine.name} search engine?'
               .hardcoded),
       actions: [
         PlatformDialogAction(
@@ -83,7 +83,7 @@ class _SearchEngineListTileDeleteDialog extends ConsumerWidget {
           onPressed: () {
             ref
                 .read(searchEnginesListScreenControllerProvider.notifier)
-                .removeSearchEngine(searchEngine);
+                .removeSearchEngine(record.id);
             context.pop();
           },
         ),
@@ -94,18 +94,18 @@ class _SearchEngineListTileDeleteDialog extends ConsumerWidget {
 
 class _SearchEngineListTileTrailing extends ConsumerWidget {
   const _SearchEngineListTileTrailing({
-    required this.searchEngine,
+    required this.searchEngineId,
     required this.isSelected,
   });
 
-  final SearchEngine searchEngine;
+  final SearchEngineId searchEngineId;
   final bool isSelected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(searchEnginesListScreenControllerProvider);
 
-    if (state.value.isLoading && state.value.asData?.value == searchEngine.id) {
+    if (state.value.isLoading && state.value.asData?.value == searchEngineId) {
       return PlatformCircularProgressIndicator();
     } else if (isSelected) {
       return Opacity(

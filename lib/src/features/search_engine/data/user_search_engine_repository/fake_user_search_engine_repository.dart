@@ -4,13 +4,13 @@ import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
 import 'package:bouser/src/utils/delay.dart';
 import 'package:bouser/src/utils/in_memory_store.dart';
 
-class FakeUserSearchEngineRepository extends UserSearchEngineRepository {
+class FakeUserSearchEngineRepository implements UserSearchEngineRepository {
   FakeUserSearchEngineRepository({
     this.addDelay = true,
   });
 
   final _userSearchEngineIndex =
-      InMemoryStore<SearchEngineId>(kDefaultSearchEngines.first.id);
+      InMemoryStore<SearchEngineId>(kDefaultSearchEngines.keys.first);
   final bool addDelay;
 
   @override
