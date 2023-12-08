@@ -1,9 +1,9 @@
 import 'package:bouser/src/app.dart';
 import 'package:bouser/src/features/browser/data/browser_repository.dart';
 import 'package:bouser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository.dart';
-import 'package:bouser/src/features/search_engine/data/search_engines_repository/fake_search_engines_repository.dart';
 import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
-import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/fake_user_search_engine_repository.dart';
+import 'package:bouser/src/features/search_engine/data/search_engines_repository/sembast_search_engines_repository.dart';
+import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/sembast_user_search_engine_repository.dart';
 import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +37,13 @@ void main() async {
     ),
   );
 
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final searchEnginesRepository =
+      await SembastSearchEnginesRepository.makeDefault();
+  final userSearchEngineRepository =
+      await SembastUserSearchEngineRepository.makeDefault();
+
   runApp(
     PlatformProvider(
       builder: (context) => PlatformTheme(
@@ -50,13 +57,17 @@ void main() async {
             browserRepositoryProvider.overrideWith(
               (ref) => ref.read(inAppWebViewBrowserRepositoryProvider),
             ),
-            // TODO: Remove this override when we have a real repository
             searchEnginesRepositoryProvider.overrideWith(
-              (ref) => FakeSearchEnginesRepository(),
+              (ref) {
+                ref.onDispose(() => searchEnginesRepository.dispose());
+                return searchEnginesRepository;
+              },
             ),
-            // TODO: Remove this override when we have a real repository
             userSearchEngineRepositoryProvider.overrideWith(
-              (ref) => FakeUserSearchEngineRepository(),
+              (ref) {
+                ref.onDispose(() => userSearchEngineRepository.dispose());
+                return userSearchEngineRepository;
+              },
             ),
           ],
           child: const App(),
