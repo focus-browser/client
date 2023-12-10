@@ -21,3 +21,15 @@ final browserRepositoryProvider = Provider<BrowserRepository>(
 final browserCurrentUrlProvider = StreamProvider.family<String?, BrowserId>(
   (ref, id) => ref.watch(browserRepositoryProvider).watchCurrentUrl(id),
 );
+
+final browserCanGoBackProvider = StreamProvider.family<bool, BrowserId>(
+  (ref, id) => ref.watch(browserRepositoryProvider).watchCanGoBack(id),
+);
+
+final browserCanGoForwardProvider = StreamProvider.family<bool, BrowserId>(
+  (ref, id) => ref.watch(browserRepositoryProvider).watchCanGoForward(id),
+);
+
+final browserCanReloadProvider = StreamProvider.family<bool, BrowserId>(
+  (ref, id) => ref.watch(browserRepositoryProvider).watchCanReload(id),
+);

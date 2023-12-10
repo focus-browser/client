@@ -58,20 +58,26 @@ class _BrowserToolbar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final browserNumber = ref.watch(selectedBrowserNumberProvider);
+    final canGoBack = ref.watch(browserCanGoBackProvider(browserNumber));
+    final canGoForward = ref.watch(browserCanGoForwardProvider(browserNumber));
     return Row(
       children: [
         Expanded(
           child: PlatformIconButton(
             icon: Icon(context.platformIcons.leftChevron),
-            onPressed: () =>
-                ref.read(browserRepositoryProvider).goBack(browserNumber),
+            onPressed: canGoBack.value ?? false
+                ? () =>
+                    ref.read(browserRepositoryProvider).goBack(browserNumber)
+                : null,
           ),
         ),
         Expanded(
           child: PlatformIconButton(
             icon: Icon(context.platformIcons.rightChevron),
-            onPressed: () =>
-                ref.read(browserRepositoryProvider).goForward(browserNumber),
+            onPressed: canGoForward.value ?? false
+                ? () =>
+                    ref.read(browserRepositoryProvider).goForward(browserNumber)
+                : null,
           ),
         ),
         Expanded(
@@ -175,6 +181,7 @@ class _BrowserSearchBar extends ConsumerWidget {
         .watch(browserCurrentUrlProvider(browserNumber))
         .whenData((value) => textController.text = value ?? '');
     final focusNode = ref.watch(_focusNodeProvider);
+    final canReload = ref.watch(browserCanReloadProvider(browserNumber));
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -186,11 +193,12 @@ class _BrowserSearchBar extends ConsumerWidget {
         material: (context, platform) => MaterialSearchBarData(
           leading: const _PrefixIcon(),
           trailing: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () =>
-                  ref.read(browserRepositoryProvider).reload(browserNumber),
-            ),
+            if (canReload.value ?? false)
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () =>
+                    ref.read(browserRepositoryProvider).reload(browserNumber),
+              ),
           ],
           onSubmitted: (value) => ref
               .read(browserBarControllerProvider.notifier)
@@ -199,9 +207,12 @@ class _BrowserSearchBar extends ConsumerWidget {
         cupertino: (context, platform) => CupertinoSearchBarData(
           autocorrect: false,
           prefixIcon: const _PrefixIcon(),
-          suffixIcon: const Icon(CupertinoIcons.refresh),
-          onSuffixTap: () =>
-              ref.read(browserRepositoryProvider).reload(browserNumber),
+          suffixIcon: canReload.value ?? false
+              ? const Icon(CupertinoIcons.refresh)
+              : const Icon(CupertinoIcons.xmark_circle_fill),
+          onSuffixTap: canReload.value ?? false
+              ? () => ref.read(browserRepositoryProvider).reload(browserNumber)
+              : null,
           onSubmitted: (value) => ref
               .read(browserBarControllerProvider.notifier)
               .search(browserNumber, value),
