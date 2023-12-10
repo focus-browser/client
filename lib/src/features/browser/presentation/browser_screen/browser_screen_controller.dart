@@ -1,3 +1,4 @@
+import 'package:bouser/src/features/browser/data/browser_repository.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,10 +28,13 @@ class BrowserScreenController extends StateNotifier<BrowserScreenState> {
     );
   }
 
-  void toggleSelectedBrowser() {
-    state = state.copyWith(
-      isPrimaryBrowserSelected: !state.isPrimaryBrowserSelected,
-    );
+  void setSelectedBrowser(BrowserId browserNumber) {
+    if (state.split != BrowserSplitState.none) {
+      state = state.copyWith(
+        isPrimaryBrowserSelected:
+            browserNumber == (state.isPrimaryBrowserSwapped ? 1 : 0),
+      );
+    }
   }
 
   void toggleSwappedBrowser() {

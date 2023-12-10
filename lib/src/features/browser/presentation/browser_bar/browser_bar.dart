@@ -105,8 +105,6 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isPrimaryBrowserSelected =
-        ref.watch(isPrimaryBrowserSelectedProvider);
     final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
     final screenSplitState = ref.watch(screenSplitProvider);
     final isScreenSplit = screenSplitState != BrowserSplitState.none;
@@ -114,17 +112,6 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
     return MoreMenuButton(
       isCupertino: isCupertino(context),
       itemBuilder: (context) => [
-        if (isScreenSplit)
-          MoreMenuItem(
-            title: isPrimaryBrowserSelected
-                ? 'Switch to Window 2'.hardcoded
-                : 'Switch to Window 1'.hardcoded,
-            iconData:
-                isPrimaryBrowserSelected ? Icons.looks_two : Icons.looks_one,
-            onTap: () => ref
-                .read(browserScreenControllerProvider.notifier)
-                .toggleSelectedBrowser(),
-          ),
         if (isScreenSplit)
           MoreMenuItem(
             title: isVerticalSplit
