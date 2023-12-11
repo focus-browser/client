@@ -8,6 +8,7 @@ abstract class BrowserRepository {
   Future<void> goForward(BrowserId id);
   Future<void> openUrl(BrowserId id, String url);
   Future<void> reload(BrowserId id);
+  Future<String?> fetchCurrentUrl(BrowserId id);
   Stream<String?> watchCurrentUrl(BrowserId id);
   Stream<bool> watchCanGoBack(BrowserId id);
   Stream<bool> watchCanGoForward(BrowserId id);

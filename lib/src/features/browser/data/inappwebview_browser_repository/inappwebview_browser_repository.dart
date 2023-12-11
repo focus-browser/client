@@ -21,6 +21,11 @@ class InAppWebViewBrowserRepository extends BrowserRepository {
   }
 
   @override
+  Future<String?> fetchCurrentUrl(BrowserId id) async {
+    return _states.value[id]?.currentUrl;
+  }
+
+  @override
   Future<void> goBack(BrowserId id) async {
     _states.value[id]?.webViewController?.goBack();
   }

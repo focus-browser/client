@@ -5,6 +5,8 @@ import 'package:bouser/src/features/search_engine/data/search_engines_repository
 import 'package:bouser/src/features/search_engine/data/search_engines_repository/sembast_search_engines_repository.dart';
 import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/sembast_user_search_engine_repository.dart';
 import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
+import 'package:bouser/src/features/share/data/share_plus_repository.dart';
+import 'package:bouser/src/features/share/data/share_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -68,6 +70,9 @@ void main() async {
                 ref.onDispose(() => userSearchEngineRepository.dispose());
                 return userSearchEngineRepository;
               },
+            ),
+            shareRepositoryProvider.overrideWith(
+              (ref) => SharePlusRepository(),
             ),
           ],
           child: const App(),

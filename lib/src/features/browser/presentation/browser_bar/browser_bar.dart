@@ -60,6 +60,7 @@ class _BrowserToolbar extends ConsumerWidget {
     final browserNumber = ref.watch(selectedBrowserNumberProvider);
     final canGoBack = ref.watch(browserCanGoBackProvider(browserNumber));
     final canGoForward = ref.watch(browserCanGoForwardProvider(browserNumber));
+    final currentUrl = ref.watch(browserCurrentUrlProvider(browserNumber));
     return Row(
       children: [
         Expanded(
@@ -83,7 +84,11 @@ class _BrowserToolbar extends ConsumerWidget {
         Expanded(
           child: PlatformIconButton(
             icon: Icon(context.platformIcons.share),
-            onPressed: () => (),
+            onPressed: currentUrl.value != null
+                ? () => ref
+                    .read(browserBarControllerProvider.notifier)
+                    .shareCurrentUrl(browserNumber)
+                : null,
           ),
         ),
         Expanded(

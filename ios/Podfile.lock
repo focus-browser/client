@@ -11,11 +11,14 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - share_plus (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
 
 SPEC REPOS:
   trunk:
@@ -28,12 +31,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_inappwebview/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
 
 PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
 

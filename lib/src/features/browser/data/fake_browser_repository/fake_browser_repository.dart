@@ -43,6 +43,11 @@ class FakeBrowserRepository implements BrowserRepository {
   }
 
   @override
+  Future<String?> fetchCurrentUrl(BrowserId id) async {
+    return _states.value[id]?.currentUrl;
+  }
+
+  @override
   Future<void> goBack(BrowserId id) async {
     final state = _states.value[id];
     if (state != null) {
