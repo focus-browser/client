@@ -5,6 +5,8 @@ typedef BrowserId = int;
 abstract class BrowserRepository {
   Future<BrowserId> createBrowser();
   Future<void> destroyBrowser(BrowserId id);
+  Future<void> clearAllStates();
+  Stream<void> watchClearedState();
   Future<void> goBack(BrowserId id);
   Future<void> goForward(BrowserId id);
   Future<void> openUrl(BrowserId id, String url);
@@ -23,6 +25,10 @@ final browserRepositoryProvider = Provider<BrowserRepository>(
 
 final browserIdsProvider = StreamProvider<List<BrowserId>>((ref) {
   return ref.watch(browserRepositoryProvider).watchBrowsers();
+});
+
+final browserClearedStatesProvider = StreamProvider<void>((ref) {
+  return ref.watch(browserRepositoryProvider).watchClearedState();
 });
 
 final browserCurrentUrlProvider = StreamProvider.family<String?, BrowserId>(

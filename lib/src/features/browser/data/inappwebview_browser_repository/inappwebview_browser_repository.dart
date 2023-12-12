@@ -28,6 +28,19 @@ class InAppWebViewBrowserRepository extends BrowserRepository {
   }
 
   @override
+  Future<void> clearAllStates() async {
+    _states.value = {
+      0: const InAppWebViewBrowserRepositoryState(),
+    };
+  }
+
+  @override
+  Stream<void> watchClearedState() {
+    return _states.stream.where((states) =>
+        states[0]?.currentUrl == null && states[0]?.webViewController == null);
+  }
+
+  @override
   Stream<List<BrowserId>> watchBrowsers() {
     return _states.stream.map((states) => states.keys.toList());
   }

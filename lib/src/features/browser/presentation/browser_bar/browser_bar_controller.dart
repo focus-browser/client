@@ -9,10 +9,12 @@ class BrowserBarController extends StateNotifier<BrowserBarState> {
     required BrowserBarState state,
     required this.searchEngineService,
     required this.shareService,
+    required this.browserRepository,
   }) : super(state);
 
   final SearchEngineService searchEngineService;
   final ShareService shareService;
+  final BrowserRepository browserRepository;
 
   void toggleBarVisibility() {
     state = state.copyWith(
@@ -27,6 +29,10 @@ class BrowserBarController extends StateNotifier<BrowserBarState> {
   Future<void> shareCurrentUrl(BrowserId id) async {
     await shareService.shareCurrentUrl(id);
   }
+
+  void clearBrowserState() {
+    browserRepository.clearAllStates();
+  }
 }
 
 final browserBarControllerProvider =
@@ -38,6 +44,7 @@ final browserBarControllerProvider =
       ),
       searchEngineService: ref.watch(searchEngineServiceProvider),
       shareService: ref.watch(shareServiceProvider),
+      browserRepository: ref.watch(browserRepositoryProvider),
     );
   },
 );
