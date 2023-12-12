@@ -6,6 +6,7 @@ import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget.dart';
+import 'package:bouser/src/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,6 +46,7 @@ class _BrowserScreen extends ConsumerWidget {
           Expanded(
             child: Stack(
               children: [
+                const _BrowserBackground(),
                 LayoutBuilder(builder: (context, constraints) {
                   return Flex(
                     direction: screenSplitState == BrowserSplitState.vertical
@@ -144,6 +146,44 @@ class _SecondaryBrowserWidget extends ConsumerWidget {
         ],
       );
     });
+  }
+}
+
+class _BrowserBackground extends StatelessWidget {
+  const _BrowserBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.blue,
+                Colors.blue.shade900,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                "assets/images/flutter_logo.png",
+              ),
+              PlatformText(
+                'Bouser'.hardcoded,
+                style: Theme.of(context).textTheme.displaySmall,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
 
