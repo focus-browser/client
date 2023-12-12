@@ -94,7 +94,9 @@ class _BrowserToolbar extends ConsumerWidget {
         Expanded(
           child: PlatformIconButton(
             icon: Icon(context.platformIcons.delete),
-            onPressed: () => (),
+            onPressed: () => ref
+                .read(browserBarControllerProvider.notifier)
+                .clearBrowserState(),
           ),
         ),
         const Expanded(

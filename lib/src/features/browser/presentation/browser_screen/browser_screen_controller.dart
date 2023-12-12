@@ -3,15 +3,22 @@ import 'package:bouser/src/features/browser/presentation/browser_screen/browser_
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BrowserScreenController extends StateNotifier<BrowserScreenState> {
-  BrowserScreenController(super.state);
+  BrowserScreenController(
+    super.state, {
+    required this.browserRepository,
+  });
 
-  void toggleSplitMode() {
+  final BrowserRepository browserRepository;
+
+  void toggleSplitMode() async {
     if (state.split == BrowserSplitState.none) {
+      await browserRepository.createBrowser();
       state = state.copyWith(
         split: BrowserSplitState.vertical,
         isPrimaryBrowserSelected: false,
       );
     } else {
+      await browserRepository.destroyBrowser(1);
       state = state.copyWith(
         split: BrowserSplitState.none,
         isPrimaryBrowserSelected: true,
@@ -53,6 +60,7 @@ class BrowserScreenController extends StateNotifier<BrowserScreenState> {
 
 final browserScreenControllerProvider = StateNotifierProvider.autoDispose<
     BrowserScreenController, BrowserScreenState>((ref) {
+  ref.watch(browserClearedStatesProvider);
   return BrowserScreenController(
     const BrowserScreenState(
       split: BrowserSplitState.none,
@@ -60,6 +68,7 @@ final browserScreenControllerProvider = StateNotifierProvider.autoDispose<
       isPrimaryBrowserSelected: true,
       isPrimaryBrowserSwapped: false,
     ),
+    browserRepository: ref.watch(browserRepositoryProvider),
   );
 });
 

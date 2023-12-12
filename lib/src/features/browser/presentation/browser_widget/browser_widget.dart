@@ -21,8 +21,11 @@ class BrowserWidget extends ConsumerWidget {
           .read(browserScreenControllerProvider.notifier)
           .setSelectedBrowser(browserNumber),
       child: InAppWebView(
-        initialUrlRequest: URLRequest(url: Uri.parse("https://flutter.dev")),
         initialOptions: InAppWebViewGroupOptions(
+          crossPlatform: InAppWebViewOptions(
+            transparentBackground: true,
+            incognito: true,
+          ),
           ios: IOSInAppWebViewOptions(
             maximumZoomScale: 5.0,
           ),
