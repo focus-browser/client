@@ -60,6 +60,7 @@ class BrowserScreenController extends StateNotifier<BrowserScreenState> {
 
 final browserScreenControllerProvider = StateNotifierProvider.autoDispose<
     BrowserScreenController, BrowserScreenState>((ref) {
+  ref.watch(browserClearedStatesProvider);
   return BrowserScreenController(
     const BrowserScreenState(
       split: BrowserSplitState.none,
