@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final _browserWidgetKeysProvider = Provider<List<GlobalKey>>((ref) {
+final _browserWidgetKeysProvider = Provider.autoDispose<List<GlobalKey>>((ref) {
   ref.watch(browserClearedStatesProvider);
   return [GlobalKey(), GlobalKey()];
 });

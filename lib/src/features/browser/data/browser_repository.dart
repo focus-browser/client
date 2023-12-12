@@ -23,26 +23,30 @@ final browserRepositoryProvider = Provider<BrowserRepository>(
   (ref) => throw UnimplementedError(),
 );
 
-final browserIdsProvider = StreamProvider<List<BrowserId>>((ref) {
+final browserIdsProvider = StreamProvider.autoDispose<List<BrowserId>>((ref) {
   return ref.watch(browserRepositoryProvider).watchBrowsers();
 });
 
-final browserClearedStatesProvider = StreamProvider<void>((ref) {
+final browserClearedStatesProvider = StreamProvider.autoDispose<void>((ref) {
   return ref.watch(browserRepositoryProvider).watchClearedState();
 });
 
-final browserCurrentUrlProvider = StreamProvider.family<String?, BrowserId>(
+final browserCurrentUrlProvider =
+    StreamProvider.family.autoDispose<String?, BrowserId>(
   (ref, id) => ref.watch(browserRepositoryProvider).watchCurrentUrl(id),
 );
 
-final browserCanGoBackProvider = StreamProvider.family<bool, BrowserId>(
+final browserCanGoBackProvider =
+    StreamProvider.family.autoDispose<bool, BrowserId>(
   (ref, id) => ref.watch(browserRepositoryProvider).watchCanGoBack(id),
 );
 
-final browserCanGoForwardProvider = StreamProvider.family<bool, BrowserId>(
+final browserCanGoForwardProvider =
+    StreamProvider.family.autoDispose<bool, BrowserId>(
   (ref, id) => ref.watch(browserRepositoryProvider).watchCanGoForward(id),
 );
 
-final browserCanReloadProvider = StreamProvider.family<bool, BrowserId>(
+final browserCanReloadProvider =
+    StreamProvider.family.autoDispose<bool, BrowserId>(
   (ref, id) => ref.watch(browserRepositoryProvider).watchCanReload(id),
 );
