@@ -11,7 +11,9 @@ class FakeBrowserRepository implements BrowserRepository {
 
   final InMemoryStore<Map<BrowserId, FakeBrowserRepositoryState>> _states =
       InMemoryStore(
-    <BrowserId, FakeBrowserRepositoryState>{},
+    <BrowserId, FakeBrowserRepositoryState>{
+      0: const FakeBrowserRepositoryState(),
+    },
   );
   final bool addDelay;
 
@@ -33,13 +35,23 @@ class FakeBrowserRepository implements BrowserRepository {
   }
 
   @override
-  BrowserId createBrowser() {
-    final id = _states.value.isEmpty ? 0 : 1;
+  Future<BrowserId> createBrowser() async {
+    const id = 1;
     _states.value = {
       ..._states.value,
       id: const FakeBrowserRepositoryState(),
     };
     return id;
+  }
+
+  @override
+  Future<void> destroyBrowser(BrowserId id) async {
+    _states.value = _states.value..remove(id);
+  }
+
+  @override
+  Stream<List<BrowserId>> watchBrowsers() {
+    return _states.stream.map((states) => states.keys.toList());
   }
 
   @override

@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 typedef BrowserId = int;
 
 abstract class BrowserRepository {
-  BrowserId createBrowser();
+  Future<BrowserId> createBrowser();
+  Future<void> destroyBrowser(BrowserId id);
   Future<void> goBack(BrowserId id);
   Future<void> goForward(BrowserId id);
   Future<void> openUrl(BrowserId id, String url);
   Future<void> reload(BrowserId id);
+  Stream<List<BrowserId>> watchBrowsers();
   Future<String?> fetchCurrentUrl(BrowserId id);
   Stream<String?> watchCurrentUrl(BrowserId id);
   Stream<bool> watchCanGoBack(BrowserId id);
@@ -18,6 +20,10 @@ abstract class BrowserRepository {
 final browserRepositoryProvider = Provider<BrowserRepository>(
   (ref) => throw UnimplementedError(),
 );
+
+final browserIdsProvider = StreamProvider<List<BrowserId>>((ref) {
+  return ref.watch(browserRepositoryProvider).watchBrowsers();
+});
 
 final browserCurrentUrlProvider = StreamProvider.family<String?, BrowserId>(
   (ref, id) => ref.watch(browserRepositoryProvider).watchCurrentUrl(id),

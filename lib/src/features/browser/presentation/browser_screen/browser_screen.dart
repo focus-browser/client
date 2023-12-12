@@ -1,4 +1,5 @@
 import 'package:bouser/src/common/app_sizes.dart';
+import 'package:bouser/src/common_widgets/async_value_widget.dart';
 import 'package:bouser/src/features/browser/data/browser_repository.dart';
 import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar.dart';
 import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
@@ -38,51 +39,60 @@ class _BrowserScreen extends ConsumerWidget {
     final screenSplitState = ref.watch(screenSplitProvider);
     final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
     final browserWidgetKeys = ref.watch(_browserWidgetKeysProvider);
-    return Column(
-      children: [
-        Expanded(
-          child: Stack(
-            children: [
-              LayoutBuilder(builder: (context, constraints) {
-                return Flex(
-                  direction: screenSplitState == BrowserSplitState.vertical
-                      ? Axis.vertical
-                      : Axis.horizontal,
-                  children: [
-                    Expanded(
-                      child: ProviderScope(
-                        key: !isPrimaryBrowserSwapped
-                            ? browserWidgetKeys.first
-                            : browserWidgetKeys.last,
-                        overrides: [
-                          browserWidgetNumberProvider.overrideWith((ref) => ref
-                              .read(browserRepositoryProvider)
-                              .createBrowser()),
-                        ],
-                        child: const BrowserWidget(),
+    final browserIds = ref.watch(browserIdsProvider);
+    return AsyncValueWidget(
+      value: browserIds,
+      data: (browsers) => Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                LayoutBuilder(builder: (context, constraints) {
+                  return Flex(
+                    direction: screenSplitState == BrowserSplitState.vertical
+                        ? Axis.vertical
+                        : Axis.horizontal,
+                    children: [
+                      Expanded(
+                        child: ProviderScope(
+                          key: !isPrimaryBrowserSwapped
+                              ? browserWidgetKeys.first
+                              : browserWidgetKeys.last,
+                          overrides: [
+                            browserWidgetNumberProvider.overrideWith(
+                              (ref) => browsers.first,
+                            ),
+                          ],
+                          child: const BrowserWidget(),
+                        ),
                       ),
-                    ),
-                    if (screenSplitState != BrowserSplitState.none)
-                      ConstrainedBox(
-                        constraints: constraints,
-                        child: const _SecondaryBrowserWidget(),
-                      ),
-                  ],
-                );
-              }),
-              if (!isBarVisible) const _BrowserBarUnhideButton(),
-            ],
+                      if (screenSplitState != BrowserSplitState.none)
+                        ConstrainedBox(
+                          constraints: constraints,
+                          child: _SecondaryBrowserWidget(
+                            browserId: browsers.last,
+                          ),
+                        ),
+                    ],
+                  );
+                }),
+                if (!isBarVisible) const _BrowserBarUnhideButton(),
+              ],
+            ),
           ),
-        ),
-        if (isBarVisible) const BrowserBar(),
-      ],
+          if (isBarVisible) const BrowserBar(),
+        ],
+      ),
     );
   }
 }
 
 class _SecondaryBrowserWidget extends ConsumerWidget {
-  const _SecondaryBrowserWidget();
+  const _SecondaryBrowserWidget({
+    required this.browserId,
+  });
 
+  final BrowserId browserId;
   final double dragHandleSize = Sizes.p48;
 
   @override
@@ -113,8 +123,9 @@ class _SecondaryBrowserWidget extends ConsumerWidget {
                   ? browserWidgetKeys.first
                   : browserWidgetKeys.last,
               overrides: [
-                browserWidgetNumberProvider.overrideWith((ref) =>
-                    ref.read(browserRepositoryProvider).createBrowser()),
+                browserWidgetNumberProvider.overrideWith(
+                  (ref) => browserId,
+                ),
               ],
               child: const BrowserWidget(),
             ),

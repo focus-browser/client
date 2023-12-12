@@ -7,17 +7,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class InAppWebViewBrowserRepository extends BrowserRepository {
   final _states =
       InMemoryStore<Map<BrowserId, InAppWebViewBrowserRepositoryState>>(
-    <BrowserId, InAppWebViewBrowserRepositoryState>{},
+    <BrowserId, InAppWebViewBrowserRepositoryState>{
+      0: const InAppWebViewBrowserRepositoryState(),
+    },
   );
 
   @override
-  BrowserId createBrowser() {
-    final id = _states.value.isEmpty ? 0 : 1;
+  Future<BrowserId> createBrowser() async {
+    const id = 1;
     _states.value = {
       ..._states.value,
       id: const InAppWebViewBrowserRepositoryState(),
     };
     return id;
+  }
+
+  @override
+  Future<void> destroyBrowser(BrowserId id) async {
+    _states.value = _states.value..remove(id);
+  }
+
+  @override
+  Stream<List<BrowserId>> watchBrowsers() {
+    return _states.stream.map((states) => states.keys.toList());
   }
 
   @override
