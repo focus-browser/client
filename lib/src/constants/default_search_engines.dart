@@ -1,4 +1,4 @@
-import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
+import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
 
 const kDefaultSearchEngines = {
   '6ba55eac-f0fe-412a-bcf8-9aa3b44bd110': SearchEngine(

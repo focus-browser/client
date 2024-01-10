@@ -1,7 +1,7 @@
-import 'package:bouser/src/features/browser/data/browser_repository.dart';
-import 'package:bouser/src/features/browser/data/fake_browser_repository/fake_browser_repository_state.dart';
-import 'package:bouser/src/utils/delay.dart';
-import 'package:bouser/src/utils/in_memory_store.dart';
+import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
+import 'package:focus_browser/src/features/browser/data/fake_browser_repository/fake_browser_repository_state.dart';
+import 'package:focus_browser/src/utils/delay.dart';
+import 'package:focus_browser/src/utils/in_memory_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FakeBrowserRepository implements BrowserRepository {

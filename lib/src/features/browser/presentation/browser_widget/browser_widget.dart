@@ -1,5 +1,5 @@
-import 'package:bouser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository.dart';
-import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
+import 'package:focus_browser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository.dart';
+import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

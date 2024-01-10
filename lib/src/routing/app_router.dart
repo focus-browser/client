@@ -1,7 +1,7 @@
-import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen.dart';
-import 'package:bouser/src/features/search_engine/presentation/add_search_engine/add_search_engine_screen.dart';
-import 'package:bouser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen.dart';
-import 'package:bouser/src/localization/string_hardcoded.dart';
+import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen.dart';
+import 'package:focus_browser/src/features/search_engine/presentation/add_search_engine/add_search_engine_screen.dart';
+import 'package:focus_browser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen.dart';
+import 'package:focus_browser/src/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

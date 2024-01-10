@@ -1,5 +1,5 @@
-import 'package:bouser/src/features/browser/data/browser_repository.dart';
-import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
+import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
+import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BrowserScreenController extends StateNotifier<BrowserScreenState> {

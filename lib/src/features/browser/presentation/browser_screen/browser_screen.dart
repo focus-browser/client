@@ -1,15 +1,15 @@
-import 'package:bouser/src/common/app_sizes.dart';
-import 'package:bouser/src/common_widgets/async_value_widget.dart';
-import 'package:bouser/src/features/browser/data/browser_repository.dart';
-import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar.dart';
-import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
-import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
-import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
-import 'package:bouser/src/features/browser/presentation/browser_widget/browser_widget.dart';
-import 'package:bouser/src/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:focus_browser/src/common/app_sizes.dart';
+import 'package:focus_browser/src/common_widgets/async_value_widget.dart';
+import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
+import 'package:focus_browser/src/features/browser/presentation/browser_bar/browser_bar.dart';
+import 'package:focus_browser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
+import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
+import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
+import 'package:focus_browser/src/features/browser/presentation/browser_widget/browser_widget.dart';
+import 'package:focus_browser/src/localization/string_hardcoded.dart';
 
 final _browserWidgetKeysProvider = Provider.autoDispose<List<GlobalKey>>((ref) {
   ref.watch(browserClearedStatesProvider);
@@ -176,7 +176,7 @@ class _BrowserBackground extends StatelessWidget {
                 "assets/images/flutter_logo.png",
               ),
               PlatformText(
-                'Bouser'.hardcoded,
+                'Focus'.hardcoded,
                 style: Theme.of(context).textTheme.displaySmall,
               ),
             ],

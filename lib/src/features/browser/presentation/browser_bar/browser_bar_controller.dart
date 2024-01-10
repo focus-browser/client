@@ -1,7 +1,7 @@
-import 'package:bouser/src/features/browser/data/browser_repository.dart';
-import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar_state.dart';
-import 'package:bouser/src/features/search_engine/application/search_engine_service.dart';
-import 'package:bouser/src/features/share/application/share_service.dart';
+import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
+import 'package:focus_browser/src/features/browser/presentation/browser_bar/browser_bar_state.dart';
+import 'package:focus_browser/src/features/search_engine/application/search_engine_service.dart';
+import 'package:focus_browser/src/features/share/application/share_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BrowserBarController extends StateNotifier<BrowserBarState> {

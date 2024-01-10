@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "bouser" "\0"
+            VALUE "FileDescription", "focus_browser" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "bouser" "\0"
+            VALUE "InternalName", "focus_browser" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "bouser.exe" "\0"
-            VALUE "ProductName", "bouser" "\0"
+            VALUE "OriginalFilename", "focus_browser.exe" "\0"
+            VALUE "ProductName", "focus_browser" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

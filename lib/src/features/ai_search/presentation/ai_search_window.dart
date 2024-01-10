@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:bouser/src/common/app_sizes.dart';
-import 'package:bouser/src/features/ai_search/data/ai_search_repository.dart';
+import 'package:focus_browser/src/common/app_sizes.dart';
+import 'package:focus_browser/src/features/ai_search/data/ai_search_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,7 +1,7 @@
-import 'package:bouser/src/features/search_engine/application/search_engine_service.dart';
-import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
-import 'package:bouser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen_state.dart';
-import 'package:bouser/src/localization/string_hardcoded.dart';
+import 'package:focus_browser/src/features/search_engine/application/search_engine_service.dart';
+import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
+import 'package:focus_browser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen_state.dart';
+import 'package:focus_browser/src/localization/string_hardcoded.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SearchEnginesListScreenController

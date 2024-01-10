@@ -1,5 +1,5 @@
-import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
-import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
+import 'package:focus_browser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
+import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';

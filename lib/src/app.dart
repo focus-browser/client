@@ -1,4 +1,4 @@
-import 'package:bouser/src/routing/app_router.dart';
+import 'package:focus_browser/src/routing/app_router.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,7 +12,7 @@ class App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final goRouter = ref.watch(goRouterProvider);
     return PlatformApp.router(
-      restorationScopeId: 'bouser',
+      restorationScopeId: 'focus_browser',
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         AppLocalizations.delegate,

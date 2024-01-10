@@ -1,6 +1,6 @@
-import 'package:bouser/src/features/browser/data/browser_repository.dart';
-import 'package:bouser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository_state.dart';
-import 'package:bouser/src/utils/in_memory_store.dart';
+import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
+import 'package:focus_browser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository_state.dart';
+import 'package:focus_browser/src/utils/in_memory_store.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

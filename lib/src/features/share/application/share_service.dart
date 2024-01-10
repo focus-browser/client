@@ -1,5 +1,5 @@
-import 'package:bouser/src/features/browser/data/browser_repository.dart';
-import 'package:bouser/src/features/share/data/share_repository.dart';
+import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
+import 'package:focus_browser/src/features/share/data/share_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ShareService {

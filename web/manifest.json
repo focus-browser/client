@@ -1,6 +1,6 @@
 {
-    "name": "bouser",
-    "short_name": "bouser",
+    "name": "focus_browser",
+    "short_name": "focus",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

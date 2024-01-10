@@ -1,4 +1,4 @@
-import 'package:bouser/src/common_widgets/sliver_to_box_wrapper.dart';
+import 'package:focus_browser/src/common_widgets/sliver_to_box_wrapper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';

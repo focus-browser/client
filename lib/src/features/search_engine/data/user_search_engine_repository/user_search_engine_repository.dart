@@ -1,4 +1,4 @@
-import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
+import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 abstract class UserSearchEngineRepository {

@@ -1,6 +1,6 @@
-import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
-import 'package:bouser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen_controller.dart';
-import 'package:bouser/src/localization/string_hardcoded.dart';
+import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
+import 'package:focus_browser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen_controller.dart';
+import 'package:focus_browser/src/localization/string_hardcoded.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';

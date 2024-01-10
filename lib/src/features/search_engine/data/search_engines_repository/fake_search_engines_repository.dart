@@ -1,7 +1,7 @@
-import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
-import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
-import 'package:bouser/src/utils/delay.dart';
-import 'package:bouser/src/utils/in_memory_store.dart';
+import 'package:focus_browser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
+import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
+import 'package:focus_browser/src/utils/delay.dart';
+import 'package:focus_browser/src/utils/in_memory_store.dart';
 
 class FakeSearchEnginesRepository implements SearchEnginesRepository {
   FakeSearchEnginesRepository({

@@ -1,9 +1,9 @@
-import 'package:bouser/src/features/browser/data/browser_repository.dart';
-import 'package:bouser/src/features/search_engine/data/default_search_engines_repository.dart';
-import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
-import 'package:bouser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
-import 'package:bouser/src/features/search_engine/domain/search_engine.dart';
-import 'package:bouser/src/utils/web_utils.dart';
+import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
+import 'package:focus_browser/src/features/search_engine/data/default_search_engines_repository.dart';
+import 'package:focus_browser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
+import 'package:focus_browser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
+import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
+import 'package:focus_browser/src/utils/web_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SearchEngineService {

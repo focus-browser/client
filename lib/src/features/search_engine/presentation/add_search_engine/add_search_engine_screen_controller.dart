@@ -1,6 +1,6 @@
-import 'package:bouser/src/features/search_engine/application/search_engine_service.dart';
-import 'package:bouser/src/features/search_engine/presentation/add_search_engine/add_search_engine_screen_state.dart';
-import 'package:bouser/src/localization/string_hardcoded.dart';
+import 'package:focus_browser/src/features/search_engine/application/search_engine_service.dart';
+import 'package:focus_browser/src/features/search_engine/presentation/add_search_engine/add_search_engine_screen_state.dart';
+import 'package:focus_browser/src/localization/string_hardcoded.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AddSearchEngineScreenController

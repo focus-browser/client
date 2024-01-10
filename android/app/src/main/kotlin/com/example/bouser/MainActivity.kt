@@ -1,4 +1,4 @@
-package com.example.bouser
+package com.example.focus_browser
 
 import io.flutter.embedding.android.FlutterActivity
 
