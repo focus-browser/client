@@ -1,5 +1,6 @@
 import 'package:bouser/src/common/app_sizes.dart';
 import 'package:bouser/src/common_widgets/more_menu_button.dart';
+import 'package:bouser/src/features/ai_search/presentation/ai_search_window.dart';
 import 'package:bouser/src/features/browser/data/browser_repository.dart';
 import 'package:bouser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
 import 'package:bouser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
@@ -194,9 +195,20 @@ class _BrowserSearchBar extends ConsumerWidget {
                     ref.read(browserRepositoryProvider).reload(browserNumber),
               ),
           ],
-          onSubmitted: (value) => ref
-              .read(browserBarControllerProvider.notifier)
-              .search(browserNumber, value),
+          onSubmitted: (value) {
+            if (value.endsWith('?')) {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                showDragHandle: true,
+                builder: (_) => AiSearchWindow(query: value),
+              );
+            } else {
+              ref
+                  .read(browserBarControllerProvider.notifier)
+                  .search(browserNumber, value);
+            }
+          },
         ),
         cupertino: (context, platform) => CupertinoSearchBarData(
           autocorrect: false,
@@ -207,9 +219,20 @@ class _BrowserSearchBar extends ConsumerWidget {
           onSuffixTap: canReload.value ?? false
               ? () => ref.read(browserRepositoryProvider).reload(browserNumber)
               : null,
-          onSubmitted: (value) => ref
-              .read(browserBarControllerProvider.notifier)
-              .search(browserNumber, value),
+          onSubmitted: (value) {
+            if (value.endsWith('?')) {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                showDragHandle: true,
+                builder: (_) => AiSearchWindow(query: value),
+              );
+            } else {
+              ref
+                  .read(browserBarControllerProvider.notifier)
+                  .search(browserNumber, value);
+            }
+          },
         ),
       ),
     );

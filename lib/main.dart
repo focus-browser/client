@@ -1,4 +1,6 @@
 import 'package:bouser/src/app.dart';
+import 'package:bouser/src/features/ai_search/data/ai_search_repository.dart';
+import 'package:bouser/src/features/ai_search/data/remote_ai_search_repository/remote_ai_search_repository.dart';
 import 'package:bouser/src/features/browser/data/browser_repository.dart';
 import 'package:bouser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository.dart';
 import 'package:bouser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
@@ -73,6 +75,11 @@ void main() async {
             ),
             shareRepositoryProvider.overrideWith(
               (ref) => SharePlusRepository(),
+            ),
+            aiSearchRepositoryProvider.overrideWith(
+              (ref) => RemoteAiSearchRepository(
+                url: Uri.parse('http://localhost:8080/api/v0/search'),
+              ),
             ),
           ],
           child: const App(),
