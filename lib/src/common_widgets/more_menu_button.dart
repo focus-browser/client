@@ -33,20 +33,38 @@ class MoreMenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = itemBuilder(context);
     if (isCupertino) {
-      return PullDownButton(
-        itemBuilder: (context) => items
-            .map(
-              (menuItem) => PullDownMenuItem(
-                title: menuItem.title,
-                icon: menuItem.iconData,
-                onTap: menuItem.onTap,
+      /// Override the current theme to make the menu background transparent.
+      /// Fixes laggy animation on iOS.
+      /// See https://github.com/notDmDrl/pull_down_button/issues/39 and
+      /// https://github.com/notDmDrl/pull_down_button/issues/10 for more info.
+      return Theme(
+        data: Theme.of(context).copyWith(
+          extensions: [
+            PullDownButtonTheme(
+              routeTheme: PullDownMenuRouteTheme(
+                backgroundColor:
+                    Theme.of(context).brightness == Brightness.light
+                        ? const Color.fromARGB(255, 255, 250, 254)
+                        : const Color.fromARGB(255, 26, 26, 28),
               ),
-            )
-            .toList(),
-        buttonBuilder: (context, showMenu) => CupertinoButton(
-          onPressed: showMenu,
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.ellipsis_circle),
+            ),
+          ],
+        ),
+        child: PullDownButton(
+          itemBuilder: (context) => items
+              .map(
+                (menuItem) => PullDownMenuItem(
+                  title: menuItem.title,
+                  icon: menuItem.iconData,
+                  onTap: menuItem.onTap,
+                ),
+              )
+              .toList(),
+          buttonBuilder: (context, showMenu) => CupertinoButton(
+            onPressed: showMenu,
+            padding: EdgeInsets.zero,
+            child: const Icon(CupertinoIcons.ellipsis_circle),
+          ),
         ),
       );
     }
