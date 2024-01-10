@@ -1,4 +1,4 @@
-package com.example.focus_browser
+package com.vin047.focus_browser
 
 import io.flutter.embedding.android.FlutterActivity
 
