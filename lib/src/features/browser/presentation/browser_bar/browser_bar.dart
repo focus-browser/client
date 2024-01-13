@@ -192,10 +192,13 @@ class _BrowserSearchBar extends ConsumerWidget {
           leading: const _PrefixIcon(),
           trailing: [
             if (canReload.value ?? false)
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: () =>
-                    ref.read(browserRepositoryProvider).reload(browserNumber),
+              Padding(
+                padding: const EdgeInsets.all(Sizes.p12),
+                child: IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () =>
+                      ref.read(browserRepositoryProvider).reload(browserNumber),
+                ),
               ),
           ],
           onSubmitted: (value) {
@@ -216,6 +219,7 @@ class _BrowserSearchBar extends ConsumerWidget {
         cupertino: (context, platform) => CupertinoSearchBarData(
           autocorrect: false,
           prefixIcon: const _PrefixIcon(),
+          suffixInsets: const EdgeInsets.all(Sizes.p12),
           suffixIcon: canReload.value ?? false
               ? const Icon(CupertinoIcons.refresh)
               : const Icon(CupertinoIcons.xmark_circle_fill),
@@ -252,12 +256,26 @@ class _PrefixIcon extends ConsumerWidget {
     final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
     final displayNumber =
         (isPrimaryBrowserSwapped ? browserNumber ^ 1 : browserNumber) + 1;
-    if (isScreenSplit == BrowserSplitState.none) {
-      return Icon(context.platformIcons.search);
-    } else {
-      return displayNumber == 1
-          ? const Icon(Icons.looks_one)
-          : const Icon(Icons.looks_two);
-    }
+    final currentUrl = ref.watch(browserCurrentUrlProvider(browserNumber));
+
+    final icon = displayNumber == 2
+        ? Icons.looks_two
+        : isScreenSplit != BrowserSplitState.none
+            ? Icons.looks_one
+            : currentUrl.value == null
+                ? context.platformIcons.search
+                : Icons.extension;
+
+    return MoreMenuButton(
+      isCupertino: isCupertino(context),
+      icon: Icon(
+        icon,
+        color: isCupertino(context) ? CupertinoColors.systemGrey : Colors.grey,
+      ),
+      itemBuilder: (context) => currentUrl.value != null
+          ? [
+            ]
+          : List<MoreMenuItem>.empty(),
+    );
   }
 }
