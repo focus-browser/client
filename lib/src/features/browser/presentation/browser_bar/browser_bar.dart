@@ -1,3 +1,7 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/common/app_sizes.dart';
 import 'package:focus_browser/src/common_widgets/more_menu_button.dart';
 import 'package:focus_browser/src/features/ai_search/presentation/ai_search_window.dart';
@@ -7,10 +11,6 @@ import 'package:focus_browser/src/features/browser/presentation/browser_screen/b
 import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:focus_browser/src/localization/string_hardcoded.dart';
 import 'package:focus_browser/src/routing/app_router.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 final _textEditingControllerProvider =
@@ -119,6 +119,9 @@ class _BrowserMoreMenuButton extends ConsumerWidget {
     final isVerticalSplit = screenSplitState == BrowserSplitState.vertical;
     return MoreMenuButton(
       isCupertino: isCupertino(context),
+      icon: isCupertino(context)
+          ? const Icon(CupertinoIcons.ellipsis_circle)
+          : const Icon(Icons.more_horiz),
       itemBuilder: (context) => [
         if (isScreenSplit)
           MoreMenuItem(

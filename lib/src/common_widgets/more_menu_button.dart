@@ -23,10 +23,12 @@ class MoreMenuButton extends StatelessWidget {
   const MoreMenuButton({
     super.key,
     required this.isCupertino,
+    required this.icon,
     required this.itemBuilder,
   });
 
   final bool isCupertino;
+  final Widget icon;
   final MoreMenuItemBuilder itemBuilder;
 
   @override
@@ -63,7 +65,7 @@ class MoreMenuButton extends StatelessWidget {
           buttonBuilder: (context, showMenu) => CupertinoButton(
             onPressed: showMenu,
             padding: EdgeInsets.zero,
-            child: const Icon(CupertinoIcons.ellipsis_circle),
+            child: icon,
           ),
         ),
       );
@@ -71,6 +73,7 @@ class MoreMenuButton extends StatelessWidget {
     final itemsMap = items.asMap();
     return PopupMenuButton(
       onSelected: (int key) => itemsMap[key]?.onTap(),
+      icon: icon,
       itemBuilder: (context) => itemsMap.entries
           .map(
             (e) => PopupMenuItem(
