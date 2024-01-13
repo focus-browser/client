@@ -9,7 +9,6 @@ import 'package:focus_browser/src/features/browser/presentation/browser_bar/brow
 import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_widget/browser_widget.dart';
-import 'package:focus_browser/src/localization/string_hardcoded.dart';
 
 final _browserWidgetKeysProvider = Provider.autoDispose<List<GlobalKey>>((ref) {
   ref.watch(browserClearedStatesProvider);
@@ -169,17 +168,8 @@ class _BrowserBackground extends StatelessWidget {
           ),
         ),
         Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                "assets/images/flutter_logo.png",
-              ),
-              PlatformText(
-                'Focus'.hardcoded,
-                style: Theme.of(context).textTheme.displaySmall,
-              ),
-            ],
+          child: Image.asset(
+            "assets/images/logo.png",
           ),
         ),
       ],
