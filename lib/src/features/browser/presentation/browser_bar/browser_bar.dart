@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/common/app_sizes.dart';
 import 'package:focus_browser/src/common_widgets/more_menu_button.dart';
 import 'package:focus_browser/src/features/ai/data/ai_search_repository.dart';
+import 'package:focus_browser/src/features/ai/data/ai_summary_repository.dart';
 import 'package:focus_browser/src/features/ai/presentation/ai_sheet.dart';
 import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
@@ -277,6 +278,21 @@ class _PrefixIcon extends ConsumerWidget {
       ),
       itemBuilder: (context) => currentUrl.value != null
           ? [
+              MoreMenuItem(
+                title: 'AI Summary'.hardcoded,
+                iconData: Icons.smart_button,
+                onTap: () => showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  showDragHandle: true,
+                  builder: (_) => Consumer(
+                    builder: (context, ref, child) => AiSheet(
+                      title: currentUrl.value!,
+                      value: ref.watch(aiSummaryProvider(currentUrl.value!)),
+                    ),
+                  ),
+                ),
+              ),
             ]
           : List<MoreMenuItem>.empty(),
     );
