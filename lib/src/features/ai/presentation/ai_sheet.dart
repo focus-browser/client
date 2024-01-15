@@ -1,21 +1,21 @@
 import 'dart:math';
 
-import 'package:focus_browser/src/common/app_sizes.dart';
-import 'package:focus_browser/src/features/ai_search/data/ai_search_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:focus_browser/src/common/app_sizes.dart';
 
-class AiSearchWindow extends ConsumerWidget {
-  const AiSearchWindow({
+class AiSheet extends StatelessWidget {
+  const AiSheet({
     super.key,
-    required this.query,
+    required this.title,
+    required this.value,
   });
 
-  final String query;
+  final String title;
+  final AsyncValue<String> value;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final response = ref.watch(aiSearchProvider(query));
+  Widget build(BuildContext context) {
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.7,
@@ -26,9 +26,9 @@ class AiSearchWindow extends ConsumerWidget {
           child: ListView(
             controller: scrollController,
             children: [
-              Text(query, style: Theme.of(context).textTheme.titleLarge),
+              Text(title, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: Sizes.p16),
-              response.when(
+              value.when(
                 data: (data) => SelectableText(data),
                 error: (e, st) => Center(
                   child: Text('Error: $e'),

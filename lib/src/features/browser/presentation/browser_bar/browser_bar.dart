@@ -4,7 +4,8 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/common/app_sizes.dart';
 import 'package:focus_browser/src/common_widgets/more_menu_button.dart';
-import 'package:focus_browser/src/features/ai_search/presentation/ai_search_window.dart';
+import 'package:focus_browser/src/features/ai/data/ai_search_repository.dart';
+import 'package:focus_browser/src/features/ai/presentation/ai_sheet.dart';
 import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
@@ -201,20 +202,21 @@ class _BrowserSearchBar extends ConsumerWidget {
                 ),
               ),
           ],
-          onSubmitted: (value) {
-            if (value.endsWith('?')) {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                showDragHandle: true,
-                builder: (_) => AiSearchWindow(query: value),
-              );
-            } else {
-              ref
+          onSubmitted: (query) => query.endsWith('?')
+              ? showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  showDragHandle: true,
+                  builder: (_) => Consumer(
+                    builder: (context, ref, child) => AiSheet(
+                      title: query,
+                      value: ref.watch(aiSearchProvider(query)),
+                    ),
+                  ),
+                )
+              : ref
                   .read(browserBarControllerProvider.notifier)
-                  .search(browserNumber, value);
-            }
-          },
+                  .search(browserNumber, query),
         ),
         cupertino: (context, platform) => CupertinoSearchBarData(
           autocorrect: false,
@@ -226,20 +228,21 @@ class _BrowserSearchBar extends ConsumerWidget {
           onSuffixTap: canReload.value ?? false
               ? () => ref.read(browserRepositoryProvider).reload(browserNumber)
               : null,
-          onSubmitted: (value) {
-            if (value.endsWith('?')) {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                showDragHandle: true,
-                builder: (_) => AiSearchWindow(query: value),
-              );
-            } else {
-              ref
+          onSubmitted: (query) => query.endsWith('?')
+              ? showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  showDragHandle: true,
+                  builder: (_) => Consumer(
+                    builder: (context, ref, child) => AiSheet(
+                      title: query,
+                      value: ref.watch(aiSearchProvider(query)),
+                    ),
+                  ),
+                )
+              : ref
                   .read(browserBarControllerProvider.notifier)
-                  .search(browserNumber, value);
-            }
-          },
+                  .search(browserNumber, query),
         ),
       ),
     );

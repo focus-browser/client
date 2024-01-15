@@ -1,22 +1,22 @@
 import 'dart:io';
 
-import 'package:focus_browser/src/features/ai_search/data/ai_search_repository.dart';
-import 'package:focus_browser/src/features/ai_search/data/remote_ai_search_repository/remote_ai_search_repository_request.dart';
-import 'package:focus_browser/src/features/ai_search/data/remote_ai_search_repository/remote_ai_search_repository_response.dart';
+import 'package:focus_browser/src/features/ai/data/ai_search_repository.dart';
+import 'package:focus_browser/src/features/ai/data/remote_ai_search_repository/remote_ai_search_repository_request.dart';
+import 'package:focus_browser/src/features/ai/data/remote_ai_search_repository/remote_ai_search_repository_response.dart';
 import 'package:http/http.dart' as http;
 
 class RemoteAiSearchRepository implements AiSearchRepository {
   RemoteAiSearchRepository({
-    required this.url,
+    required this.repoUrl,
   });
 
-  final Uri url;
+  final Uri repoUrl;
 
   @override
   Future<String> search(String query) async {
     final request = RemoteAiSearchRepositoryRequest(query: query);
     final httpResponse = await http.post(
-      url,
+      repoUrl,
       headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
       },

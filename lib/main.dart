@@ -1,6 +1,10 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/app.dart';
-import 'package:focus_browser/src/features/ai_search/data/ai_search_repository.dart';
-import 'package:focus_browser/src/features/ai_search/data/remote_ai_search_repository/remote_ai_search_repository.dart';
+import 'package:focus_browser/src/features/ai/data/ai_search_repository.dart';
+import 'package:focus_browser/src/features/ai/data/remote_ai_search_repository/remote_ai_search_repository.dart';
 import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
 import 'package:focus_browser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository.dart';
 import 'package:focus_browser/src/features/search_engine/data/search_engines_repository/search_engines_repository.dart';
@@ -9,10 +13,6 @@ import 'package:focus_browser/src/features/search_engine/data/user_search_engine
 import 'package:focus_browser/src/features/search_engine/data/user_search_engine_repository/user_search_engine_repository.dart';
 import 'package:focus_browser/src/features/share/data/share_plus_repository.dart';
 import 'package:focus_browser/src/features/share/data/share_repository.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   const themeMode = ThemeMode.system;
@@ -78,7 +78,7 @@ void main() async {
             ),
             aiSearchRepositoryProvider.overrideWith(
               (ref) => RemoteAiSearchRepository(
-                url: Uri.parse('http://localhost:8080/api/v0/search'),
+                repoUrl: Uri.parse('http://localhost:8080/api/v0/search'),
               ),
             ),
           ],
