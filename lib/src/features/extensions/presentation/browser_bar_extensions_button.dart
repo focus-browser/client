@@ -6,6 +6,7 @@ import 'package:focus_browser/src/common_widgets/more_menu_button.dart';
 import 'package:focus_browser/src/features/ai_summary/data/ai_summary_repository.dart';
 import 'package:focus_browser/src/common_widgets/ai_sheet.dart';
 import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
+import 'package:focus_browser/src/features/snapshot/presentation/snapshot_menu_item.dart';
 import 'package:focus_browser/src/localization/string_hardcoded.dart';
 
 class BrowserBarExtensionsButton extends ConsumerWidget {
@@ -45,6 +46,7 @@ class BrowserBarExtensionsButton extends ConsumerWidget {
                   ),
                 ),
               ),
+              snapshotMenuItem(ref, browserNumber, currentUrl!),
             ]
           : List<MoreMenuItem>.empty(),
     );
