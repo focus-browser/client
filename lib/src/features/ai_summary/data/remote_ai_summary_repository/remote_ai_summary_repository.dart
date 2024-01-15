@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:focus_browser/src/features/ai/data/ai_summary_repository.dart';
-import 'package:focus_browser/src/features/ai/data/remote_ai_summary_repository/remote_ai_summary_repository_request.dart';
-import 'package:focus_browser/src/features/ai/data/remote_ai_summary_repository/remote_ai_summary_repository_response.dart';
+import 'package:focus_browser/src/features/ai_summary/data/ai_summary_repository.dart';
+import 'package:focus_browser/src/features/ai_summary/data/remote_ai_summary_repository/remote_ai_summary_repository_request.dart';
+import 'package:focus_browser/src/features/ai_summary/data/remote_ai_summary_repository/remote_ai_summary_repository_response.dart';
 import 'package:http/http.dart' as http;
 
 class RemoteAiSummaryRepository implements AiSummaryRepository {

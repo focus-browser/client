@@ -1,6 +1,6 @@
 import 'package:focus_browser/src/constants/lorem_ipsum.dart';
-import 'package:focus_browser/src/features/ai/data/ai_summary_repository.dart';
-import 'package:focus_browser/src/features/ai/data/remote_ai_summary_repository/remote_ai_summary_repository_response.dart';
+import 'package:focus_browser/src/features/ai_summary/data/ai_summary_repository.dart';
+import 'package:focus_browser/src/features/ai_summary/data/remote_ai_summary_repository/remote_ai_summary_repository_response.dart';
 import 'package:focus_browser/src/utils/delay.dart';
 
 typedef FakeAiSummaryRepositoryResponse = RemoteAiSummaryRepositoryResponse;

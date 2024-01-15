@@ -1,6 +1,6 @@
 import 'package:focus_browser/src/constants/lorem_ipsum.dart';
-import 'package:focus_browser/src/features/ai/data/ai_search_repository.dart';
-import 'package:focus_browser/src/features/ai/data/remote_ai_search_repository/remote_ai_search_repository_response.dart';
+import 'package:focus_browser/src/features/ai_search/data/ai_search_repository.dart';
+import 'package:focus_browser/src/features/ai_search/data/remote_ai_search_repository/remote_ai_search_repository_response.dart';
 import 'package:focus_browser/src/utils/delay.dart';
 
 typedef FakeAiSearchRepositoryResponse = RemoteAiSearchRepositoryResponse;

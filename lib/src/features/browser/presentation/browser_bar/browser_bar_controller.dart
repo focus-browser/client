@@ -27,11 +27,7 @@ class BrowserBarController extends StateNotifier<BrowserBarState> {
     if (!isWebAddress(input)) {
       input = await searchEngineService.renderSearchUrl(input);
     }
-    return openUrl(id, input);
-  }
-
-  Future<void> openUrl(BrowserId id, String url) async {
-    return browserRepository.openUrl(id, url);
+    return browserRepository.openUrl(id, input);
   }
 
   Future<void> shareCurrentUrl(BrowserId id) async {

@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:focus_browser/src/features/ai/data/ai_search_repository.dart';
-import 'package:focus_browser/src/features/ai/data/remote_ai_search_repository/remote_ai_search_repository_request.dart';
-import 'package:focus_browser/src/features/ai/data/remote_ai_search_repository/remote_ai_search_repository_response.dart';
+import 'package:focus_browser/src/features/ai_search/data/ai_search_repository.dart';
+import 'package:focus_browser/src/features/ai_search/data/remote_ai_search_repository/remote_ai_search_repository_request.dart';
+import 'package:focus_browser/src/features/ai_search/data/remote_ai_search_repository/remote_ai_search_repository_response.dart';
 import 'package:http/http.dart' as http;
 
 class RemoteAiSearchRepository implements AiSearchRepository {
