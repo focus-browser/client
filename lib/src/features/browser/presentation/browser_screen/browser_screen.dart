@@ -156,14 +156,14 @@ class _BrowserBackground extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.blue,
-                Colors.blue.shade900,
+                Color.fromARGB(255, 127, 182, 227),
+                Color.fromARGB(255, 109, 94, 228),
               ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
             ),
           ),
         ),
