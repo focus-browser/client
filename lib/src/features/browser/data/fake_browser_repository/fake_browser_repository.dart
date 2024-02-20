@@ -1,8 +1,8 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
 import 'package:focus_browser/src/features/browser/data/fake_browser_repository/fake_browser_repository_state.dart';
 import 'package:focus_browser/src/utils/delay.dart';
 import 'package:focus_browser/src/utils/in_memory_store.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FakeBrowserRepository implements BrowserRepository {
   FakeBrowserRepository({
@@ -17,10 +17,13 @@ class FakeBrowserRepository implements BrowserRepository {
   );
   final bool addDelay;
 
-  Future<FakeBrowserRepositoryState> _navigateToIndex(
-      FakeBrowserRepositoryState state, int index) async {
+  Stream<FakeBrowserRepositoryState> _navigateToIndex(
+      FakeBrowserRepositoryState state, int index) async* {
+    yield state.copyWith(
+        currentUrl: state.history[index], index: index, loadingProgress: 0.3);
     await delay(addDelay);
-    return state.copyWith(currentUrl: state.history[index], index: index);
+    yield state.copyWith(
+        currentUrl: state.history[index], index: index, loadingProgress: 1);
   }
 
   FakeBrowserRepositoryState _appendToHistory(
@@ -76,10 +79,12 @@ class FakeBrowserRepository implements BrowserRepository {
   Future<void> goBack(BrowserId id) async {
     final state = _states.value[id];
     if (state != null) {
-      _states.value = {
-        ..._states.value,
-        id: await _navigateToIndex(state, state.index - 1),
-      };
+      await for (final newState in _navigateToIndex(state, state.index - 1)) {
+        _states.value = {
+          ..._states.value,
+          id: newState,
+        };
+      }
     }
   }
 
@@ -87,10 +92,12 @@ class FakeBrowserRepository implements BrowserRepository {
   Future<void> goForward(BrowserId id) async {
     final state = _states.value[id];
     if (state != null) {
-      _states.value = {
-        ..._states.value,
-        id: await _navigateToIndex(state, state.index + 1),
-      };
+      await for (final newState in _navigateToIndex(state, state.index + 1)) {
+        _states.value = {
+          ..._states.value,
+          id: newState,
+        };
+      }
     }
   }
 
@@ -98,11 +105,14 @@ class FakeBrowserRepository implements BrowserRepository {
   Future<void> openUrl(BrowserId id, String url) async {
     final state = _states.value[id];
     if (state != null) {
-      final newState = _appendToHistory(state, url);
-      _states.value = {
-        ..._states.value,
-        id: await _navigateToIndex(newState, newState.index + 1),
-      };
+      final updatedState = _appendToHistory(state, url);
+      await for (final newState
+          in _navigateToIndex(updatedState, updatedState.index + 1)) {
+        _states.value = {
+          ..._states.value,
+          id: newState,
+        };
+      }
     }
   }
 
@@ -110,10 +120,12 @@ class FakeBrowserRepository implements BrowserRepository {
   Future<void> reload(BrowserId id) async {
     final state = _states.value[id];
     if (state != null) {
-      _states.value = {
-        ..._states.value,
-        id: await _navigateToIndex(state, state.index),
-      };
+      await for (final newState in _navigateToIndex(state, state.index)) {
+        _states.value = {
+          ..._states.value,
+          id: newState,
+        };
+      }
     }
   }
 
@@ -141,6 +153,11 @@ class FakeBrowserRepository implements BrowserRepository {
   @override
   Stream<String?> watchCurrentUrl(BrowserId id) {
     return _states.stream.map((states) => states[id]?.currentUrl);
+  }
+
+  @override
+  Stream<double> watchProgress(BrowserId id) {
+    return _states.stream.map((states) => states[id]?.loadingProgress ?? 0);
   }
 
   void dispose() {

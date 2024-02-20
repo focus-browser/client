@@ -14,6 +14,7 @@ abstract class BrowserRepository {
   Stream<List<BrowserId>> watchBrowsers();
   Future<String?> fetchCurrentUrl(BrowserId id);
   Stream<String?> watchCurrentUrl(BrowserId id);
+  Stream<double> watchProgress(BrowserId id);
   Stream<bool> watchCanGoBack(BrowserId id);
   Stream<bool> watchCanGoForward(BrowserId id);
   Stream<bool> watchCanReload(BrowserId id);
@@ -34,6 +35,10 @@ final browserClearedStatesProvider = StreamProvider.autoDispose<void>((ref) {
 final browserCurrentUrlProvider =
     StreamProvider.family.autoDispose<String?, BrowserId>(
   (ref, id) => ref.watch(browserRepositoryProvider).watchCurrentUrl(id),
+);
+
+final browserProgressProvider = StreamProvider.family<double, BrowserId>(
+  (ref, id) => ref.watch(browserRepositoryProvider).watchProgress(id),
 );
 
 final browserCanGoBackProvider =

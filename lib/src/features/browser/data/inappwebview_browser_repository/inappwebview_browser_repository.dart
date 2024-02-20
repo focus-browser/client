@@ -1,8 +1,8 @@
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
 import 'package:focus_browser/src/features/browser/data/inappwebview_browser_repository/inappwebview_browser_repository_state.dart';
 import 'package:focus_browser/src/utils/in_memory_store.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class InAppWebViewBrowserRepository extends BrowserRepository {
   final _states =
@@ -97,6 +97,12 @@ class InAppWebViewBrowserRepository extends BrowserRepository {
     return _states.stream.asyncMap((states) => states[id]?.currentUrl);
   }
 
+  @override
+  Stream<double> watchProgress(BrowserId id) {
+    return _states.stream
+        .asyncMap((states) => states[id]?.loadingProgress ?? 0);
+  }
+
   void setController(BrowserId id, InAppWebViewController webViewController) {
     final state = _states.value[id];
     if (state != null) {
@@ -113,6 +119,16 @@ class InAppWebViewBrowserRepository extends BrowserRepository {
       _states.value = {
         ..._states.value,
         id: state.copyWith(currentUrl: value.toString()),
+      };
+    }
+  }
+
+  void updateLoadingProgress(BrowserId id, double value) {
+    final state = _states.value[id];
+    if (state != null) {
+      _states.value = {
+        ..._states.value,
+        id: state.copyWith(loadingProgress: value),
       };
     }
   }

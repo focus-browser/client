@@ -48,6 +48,9 @@ class BrowserWidget extends ConsumerWidget {
           onUpdateVisitedHistory: (controller, url, androidIsReload) => ref
               .read(inAppWebViewBrowserRepositoryProvider)
               .updateCurrentUrl(browserNumber, url),
+          onProgressChanged: (controller, progress) => ref
+              .read(inAppWebViewBrowserRepositoryProvider)
+              .updateLoadingProgress(browserNumber, progress / 100),
         ),
       ),
     );

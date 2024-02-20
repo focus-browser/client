@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/common/app_sizes.dart';
+import 'package:focus_browser/src/common_widgets/ai_sheet.dart';
 import 'package:focus_browser/src/common_widgets/more_menu_button.dart';
 import 'package:focus_browser/src/features/ai_search/data/ai_search_repository.dart';
-import 'package:focus_browser/src/common_widgets/ai_sheet.dart';
 import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
@@ -39,17 +39,27 @@ final _focusNodeProvider = Provider.autoDispose<FocusNode>((ref) {
   return focusNode;
 });
 
-class BrowserBar extends StatelessWidget {
+class BrowserBar extends ConsumerWidget {
   const BrowserBar({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return const Column(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedBrowser = ref.watch(selectedBrowserNumberProvider);
+    final progress = ref.watch(browserProgressProvider(selectedBrowser)).value;
+    return Stack(
       children: [
-        _BrowserSearchBar(),
-        _BrowserToolbar(),
+        const Column(
+          children: [
+            _BrowserSearchBar(),
+            _BrowserToolbar(),
+          ],
+        ),
+        if (progress != null && progress < 1)
+          LinearProgressIndicator(
+            value: progress,
+          )
       ],
     );
   }
