@@ -32,6 +32,7 @@ class BrowserWidget extends ConsumerWidget {
             ),
             ios: IOSInAppWebViewOptions(
               maximumZoomScale: 5.0,
+              allowsInlineMediaPlayback: true,
             ),
           ),
           onWebViewCreated: (webViewController) => ref
