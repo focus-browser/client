@@ -3,6 +3,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/common/app_sizes.dart';
 import 'package:focus_browser/src/common_widgets/async_value_widget.dart';
+import 'package:focus_browser/src/constants/breakpoint.dart';
 import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_bar/browser_bar.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
@@ -34,54 +35,73 @@ class _BrowserScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isBarVisible = ref.watch(isBarVisibleProvider);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth >= Breakpoint.tablet;
+        return Column(
+          children: [
+            if (isBarVisible && wide) const BrowserBar(),
+            Expanded(
+              child: Stack(
+                children: [
+                  const _BrowserBackground(),
+                  const _BrowserWindows(),
+                  if (!isBarVisible) const _BrowserBarUnhideButton(),
+                ],
+              ),
+            ),
+            if (isBarVisible && !wide)
+              const Padding(
+                padding: EdgeInsets.only(top: Sizes.p8),
+                child: BrowserBar(),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _BrowserWindows extends ConsumerWidget {
+  const _BrowserWindows();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final screenSplitState = ref.watch(screenSplitProvider);
     final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
     final browserWidgetKeys = ref.watch(_browserWidgetKeysProvider);
     final browserIds = ref.watch(browserIdsProvider);
     return AsyncValueWidget(
       value: browserIds,
-      data: (browsers) => Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                const _BrowserBackground(),
-                LayoutBuilder(builder: (context, constraints) {
-                  return Flex(
-                    direction: screenSplitState == BrowserSplitState.vertical
-                        ? Axis.vertical
-                        : Axis.horizontal,
-                    children: [
-                      Expanded(
-                        child: ProviderScope(
-                          key: !isPrimaryBrowserSwapped
-                              ? browserWidgetKeys.first
-                              : browserWidgetKeys.last,
-                          overrides: [
-                            browserWidgetNumberProvider.overrideWith(
-                              (ref) => browsers.first,
-                            ),
-                          ],
-                          child: const BrowserWidget(),
-                        ),
-                      ),
-                      if (screenSplitState != BrowserSplitState.none)
-                        ConstrainedBox(
-                          constraints: constraints,
-                          child: _SecondaryBrowserWidget(
-                            browserId: browsers.last,
-                          ),
-                        ),
-                    ],
-                  );
-                }),
-                if (!isBarVisible) const _BrowserBarUnhideButton(),
-              ],
+      data: (browsers) => LayoutBuilder(builder: (context, constraints) {
+        return Flex(
+          direction: screenSplitState == BrowserSplitState.vertical
+              ? Axis.vertical
+              : Axis.horizontal,
+          children: [
+            Expanded(
+              child: ProviderScope(
+                key: !isPrimaryBrowserSwapped
+                    ? browserWidgetKeys.first
+                    : browserWidgetKeys.last,
+                overrides: [
+                  browserWidgetNumberProvider.overrideWith(
+                    (ref) => browsers.first,
+                  ),
+                ],
+                child: const BrowserWidget(),
+              ),
             ),
-          ),
-          if (isBarVisible) const BrowserBar(),
-        ],
-      ),
+            if (screenSplitState != BrowserSplitState.none)
+              ConstrainedBox(
+                constraints: constraints,
+                child: _SecondaryBrowserWidget(
+                  browserId: browsers.last,
+                ),
+              ),
+          ],
+        );
+      }),
     );
   }
 }
