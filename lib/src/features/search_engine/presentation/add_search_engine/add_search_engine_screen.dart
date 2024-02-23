@@ -1,10 +1,12 @@
-import 'package:focus_browser/src/common/app_sizes.dart';
-import 'package:focus_browser/src/features/search_engine/presentation/add_search_engine/add_search_engine_screen_controller.dart';
-import 'package:focus_browser/src/localization/string_hardcoded.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:focus_browser/src/common/app_sizes.dart';
+import 'package:focus_browser/src/common_widgets/responsive_center.dart';
+import 'package:focus_browser/src/constants/breakpoint.dart';
+import 'package:focus_browser/src/features/search_engine/presentation/add_search_engine/add_search_engine_screen_controller.dart';
+import 'package:focus_browser/src/localization/string_hardcoded.dart';
 import 'package:go_router/go_router.dart';
 
 class AddSearchEngineScreen extends ConsumerWidget {
@@ -41,13 +43,16 @@ class AddSearchEngineScreen extends ConsumerWidget {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            const _SearchEngineNameField(),
-            if (isMaterial(context))
-              const Padding(padding: EdgeInsets.only(top: Sizes.p24)),
-            const _SearchEngineUrlField(),
-          ],
+        child: ResponsiveCenter(
+          maxContentWidth: Breakpoint.tablet,
+          child: Column(
+            children: [
+              const _SearchEngineNameField(),
+              if (isMaterial(context))
+                const Padding(padding: EdgeInsets.only(top: Sizes.p24)),
+              const _SearchEngineUrlField(),
+            ],
+          ),
         ),
       ),
     );
@@ -62,7 +67,7 @@ class _SearchEngineNameField extends ConsumerWidget {
     final state = ref.watch(addSearchEngineScreenControllerProvider);
 
     if (isCupertino(context)) {
-      return CupertinoListSection(
+      return CupertinoListSection.insetGrouped(
         header: Text('Name'.hardcoded),
         hasLeading: false,
         children: [
@@ -113,7 +118,7 @@ class _SearchEngineUrlField extends ConsumerWidget {
     final state = ref.watch(addSearchEngineScreenControllerProvider);
 
     if (isCupertino(context)) {
-      return CupertinoListSection(
+      return CupertinoListSection.insetGrouped(
         header: Text('URL Template'.hardcoded),
         hasLeading: false,
         children: [

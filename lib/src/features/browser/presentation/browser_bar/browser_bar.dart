@@ -4,16 +4,16 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/common/app_sizes.dart';
 import 'package:focus_browser/src/common_widgets/ai_sheet.dart';
-import 'package:focus_browser/src/common_widgets/more_menu_button.dart';
+import 'package:focus_browser/src/common_widgets/responsive_center.dart';
+import 'package:focus_browser/src/constants/breakpoint.dart';
 import 'package:focus_browser/src/features/ai_search/data/ai_search_repository.dart';
 import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
+import 'package:focus_browser/src/features/browser/presentation/browser_bar/browser_bar_buttons.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_bar/browser_bar_controller.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_controller.dart';
 import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:focus_browser/src/features/extensions/presentation/browser_bar_extensions_button.dart';
 import 'package:focus_browser/src/localization/string_hardcoded.dart';
-import 'package:focus_browser/src/routing/app_router.dart';
-import 'package:go_router/go_router.dart';
 
 final _textEditingControllerProvider =
     Provider.autoDispose<TextEditingController>((ref) {
@@ -46,134 +46,62 @@ class BrowserBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedBrowser = ref.watch(selectedBrowserNumberProvider);
-    final progress = ref.watch(browserProgressProvider(selectedBrowser)).value;
-    return Stack(
-      children: [
-        const Column(
-          children: [
-            _BrowserSearchBar(),
-            _BrowserToolbar(),
-          ],
-        ),
-        if (progress != null && progress < 1)
-          LinearProgressIndicator(
-            value: progress,
-          )
-      ],
-    );
+    return LayoutBuilder(builder: (context, contraints) {
+      final wide = contraints.maxWidth >= Breakpoint.tablet;
+      if (wide) {
+        return const _BrowserBarHorizontal();
+      }
+      return const _BrowserBarVertical();
+    });
   }
 }
 
-class _BrowserToolbar extends ConsumerWidget {
-  const _BrowserToolbar();
+class _BrowserBarHorizontal extends StatelessWidget {
+  const _BrowserBarHorizontal();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final browserNumber = ref.watch(selectedBrowserNumberProvider);
-    final canGoBack = ref.watch(browserCanGoBackProvider(browserNumber));
-    final canGoForward = ref.watch(browserCanGoForwardProvider(browserNumber));
-    final currentUrl = ref.watch(browserCurrentUrlProvider(browserNumber));
+  Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
+        const BrowserBarButtonBack(),
+        const BrowserBarButtonForward(),
+        Opacity(
+          opacity: 0,
           child: PlatformIconButton(
-            icon: Icon(context.platformIcons.leftChevron),
-            onPressed: canGoBack.value ?? false
-                ? () =>
-                    ref.read(browserRepositoryProvider).goBack(browserNumber)
-                : null,
-          ),
-        ),
-        Expanded(
-          child: PlatformIconButton(
-            icon: Icon(context.platformIcons.rightChevron),
-            onPressed: canGoForward.value ?? false
-                ? () =>
-                    ref.read(browserRepositoryProvider).goForward(browserNumber)
-                : null,
-          ),
-        ),
-        Expanded(
-          child: PlatformIconButton(
-            icon: Icon(context.platformIcons.share),
-            onPressed: currentUrl.value != null
-                ? () => ref
-                    .read(browserBarControllerProvider.notifier)
-                    .shareCurrentUrl(browserNumber)
-                : null,
-          ),
-        ),
-        Expanded(
-          child: PlatformIconButton(
-            icon: Icon(context.platformIcons.delete),
-            onPressed: () => ref
-                .read(browserBarControllerProvider.notifier)
-                .clearBrowserState(),
+            icon: Icon(context.platformIcons.search),
+            onPressed: () {},
           ),
         ),
         const Expanded(
-          child: _BrowserMoreMenuButton(),
+          child: ResponsiveCenter(
+            child: _BrowserSearchBar(),
+          ),
         ),
+        const BrowserBarButtonShare(),
+        const BrowserBarButtonClear(),
+        const BrowserBarButtonMore(),
       ],
     );
   }
 }
 
-class _BrowserMoreMenuButton extends ConsumerWidget {
-  const _BrowserMoreMenuButton();
+class _BrowserBarVertical extends StatelessWidget {
+  const _BrowserBarVertical();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isPrimaryBrowserSwapped = ref.watch(isPrimaryBrowserSwappedProvider);
-    final screenSplitState = ref.watch(screenSplitProvider);
-    final isScreenSplit = screenSplitState != BrowserSplitState.none;
-    final isVerticalSplit = screenSplitState == BrowserSplitState.vertical;
-    return MoreMenuButton(
-      isCupertino: isCupertino(context),
-      icon: isCupertino(context)
-          ? const Icon(CupertinoIcons.ellipsis_circle)
-          : const Icon(Icons.more_horiz),
-      itemBuilder: (context) => [
-        if (isScreenSplit)
-          MoreMenuItem(
-            title: isVerticalSplit
-                ? 'Split Vertically'.hardcoded
-                : 'Split Horizontally'.hardcoded,
-            iconData:
-                isVerticalSplit ? Icons.vertical_split : Icons.horizontal_split,
-            onTap: () => ref
-                .read(browserScreenControllerProvider.notifier)
-                .toggleSplitOrientation(),
-          ),
-        if (isScreenSplit)
-          MoreMenuItem(
-            title: 'Swap Windows'.hardcoded,
-            iconData: isVerticalSplit ? Icons.swap_vert : Icons.swap_horiz,
-            onTap: () => ref
-                .read(browserScreenControllerProvider.notifier)
-                .toggleSwappedBrowser(),
-          ),
-        MoreMenuItem(
-          title: isScreenSplit
-              ? 'Close Window ${isPrimaryBrowserSwapped ? 1 : 2}'.hardcoded
-              : 'Split Screen'.hardcoded,
-          iconData: isScreenSplit ? Icons.close : Icons.splitscreen,
-          onTap: () => ref
-              .read(browserScreenControllerProvider.notifier)
-              .toggleSplitMode(),
-        ),
-        MoreMenuItem(
-          title: 'Search Engines'.hardcoded,
-          iconData: PlatformIcons(context).search,
-          onTap: () => context.goNamed(AppRoutes.searchEngine.name),
-        ),
-        MoreMenuItem(
-          title: 'Hide Toolbar'.hardcoded,
-          iconData: Icons.open_in_full,
-          onTap: () => ref
-              .read(browserBarControllerProvider.notifier)
-              .toggleBarVisibility(),
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        _BrowserSearchBar(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            BrowserBarButtonBack(),
+            BrowserBarButtonForward(),
+            BrowserBarButtonShare(),
+            BrowserBarButtonClear(),
+            BrowserBarButtonMore(),
+          ],
         ),
       ],
     );
@@ -194,68 +122,100 @@ class _BrowserSearchBar extends ConsumerWidget {
     final canReload = ref.watch(browserCanReloadProvider(browserNumber));
 
     return Padding(
-      padding: const EdgeInsets.only(
-          left: Sizes.p16, right: Sizes.p16, top: Sizes.p12),
-      child: PlatformSearchBar(
-        controller: textController,
-        focusNode: focusNode,
-        hintText: 'Search or enter website name'.hardcoded,
-        material: (context, platform) => MaterialSearchBarData(
-          leading: const _PrefixIcon(),
-          trailing: [
-            if (canReload.value ?? false)
-              Padding(
-                padding: const EdgeInsets.all(Sizes.p12),
-                child: IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () =>
-                      ref.read(browserRepositoryProvider).reload(browserNumber),
-                ),
-              ),
-          ],
-          onSubmitted: (query) => query.endsWith('?')
-              ? showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  showDragHandle: true,
-                  builder: (_) => Consumer(
-                    builder: (context, ref, child) => AiSheet(
-                      title: query,
-                      value: ref.watch(aiSearchProvider(query)),
+      padding: const EdgeInsets.only(left: Sizes.p16, right: Sizes.p16),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          PlatformSearchBar(
+            controller: textController,
+            focusNode: focusNode,
+            hintText: 'Search or enter website name'.hardcoded,
+            material: (context, platform) => MaterialSearchBarData(
+              leading: const _PrefixIcon(),
+              trailing: [
+                if (canReload.value ?? false)
+                  Padding(
+                    padding: const EdgeInsets.all(Sizes.p12),
+                    child: IconButton(
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () => ref
+                          .read(browserRepositoryProvider)
+                          .reload(browserNumber),
                     ),
                   ),
-                )
-              : ref
-                  .read(browserBarControllerProvider.notifier)
-                  .search(browserNumber, query),
-        ),
-        cupertino: (context, platform) => CupertinoSearchBarData(
-          autocorrect: false,
-          prefixIcon: const _PrefixIcon(),
-          suffixInsets: const EdgeInsets.all(Sizes.p12),
-          suffixIcon: canReload.value ?? false
-              ? const Icon(CupertinoIcons.refresh)
-              : const Icon(CupertinoIcons.xmark_circle_fill),
-          onSuffixTap: canReload.value ?? false
-              ? () => ref.read(browserRepositoryProvider).reload(browserNumber)
-              : null,
-          onSubmitted: (query) => query.endsWith('?')
-              ? showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  showDragHandle: true,
-                  builder: (_) => Consumer(
-                    builder: (context, ref, child) => AiSheet(
-                      title: query,
-                      value: ref.watch(aiSearchProvider(query)),
-                    ),
-                  ),
-                )
-              : ref
-                  .read(browserBarControllerProvider.notifier)
-                  .search(browserNumber, query),
-        ),
+              ],
+              onSubmitted: (query) => query.endsWith('?')
+                  ? showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      showDragHandle: true,
+                      builder: (_) => Consumer(
+                        builder: (context, ref, child) => AiSheet(
+                          title: query,
+                          value: ref.watch(aiSearchProvider(query)),
+                        ),
+                      ),
+                    )
+                  : ref
+                      .read(browserBarControllerProvider.notifier)
+                      .search(browserNumber, query),
+            ),
+            cupertino: (context, platform) => CupertinoSearchBarData(
+              autocorrect: false,
+              prefixIcon: const _PrefixIcon(),
+              suffixInsets: const EdgeInsets.all(Sizes.p12),
+              suffixIcon: canReload.value ?? false
+                  ? const Icon(CupertinoIcons.refresh)
+                  : const Icon(CupertinoIcons.xmark_circle_fill),
+              onSuffixTap: canReload.value ?? false
+                  ? () =>
+                      ref.read(browserRepositoryProvider).reload(browserNumber)
+                  : null,
+              onSubmitted: (query) => query.endsWith('?')
+                  ? showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      showDragHandle: true,
+                      builder: (_) => Consumer(
+                        builder: (context, ref, child) => AiSheet(
+                          title: query,
+                          value: ref.watch(aiSearchProvider(query)),
+                        ),
+                      ),
+                    )
+                  : ref
+                      .read(browserBarControllerProvider.notifier)
+                      .search(browserNumber, query),
+            ),
+          ),
+          const _ProgressBar(),
+        ],
       ),
+    );
+  }
+}
+
+class _ProgressBar extends ConsumerWidget {
+  const _ProgressBar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final browserNumber = ref.watch(selectedBrowserNumberProvider);
+    final progress = ref.watch(browserProgressProvider(browserNumber));
+    return progress.maybeWhen(
+      data: (data) => data < 1
+          ? Padding(
+              padding:
+                  const EdgeInsets.only(left: 1.0, right: 1.0, bottom: 1.0),
+              child: LinearProgressIndicator(
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(Sizes.p64),
+                ),
+                value: data,
+              ),
+            )
+          : const SizedBox.shrink(),
+      orElse: () => const SizedBox.shrink(),
     );
   }
 }
