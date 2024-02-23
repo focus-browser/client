@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/common/app_sizes.dart';
+import 'package:focus_browser/src/constants/breakpoint.dart';
 
 class AiSheet extends StatelessWidget {
   const AiSheet({
@@ -13,6 +14,7 @@ class AiSheet extends StatelessWidget {
 
   final String title;
   final AsyncValue<String> value;
+  static const double _padding = Sizes.p24;
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +24,26 @@ class AiSheet extends StatelessWidget {
       minChildSize: 0.2,
       builder: (BuildContext context, ScrollController scrollController) {
         return Padding(
-          padding: const EdgeInsets.all(Sizes.p16),
+          padding: const EdgeInsets.symmetric(horizontal: _padding),
           child: ListView(
             controller: scrollController,
             children: [
               Text(title, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: Sizes.p16),
-              value.when(
-                data: (data) => SelectableText(data),
-                error: (e, st) => Center(
-                  child: Text('Error: $e'),
-                ),
-                loading: () => const _AiTextLoading(),
-              ),
+              LayoutBuilder(builder: (context, constraints) {
+                final wide =
+                    constraints.maxWidth >= Breakpoint.tablet - (2 * _padding);
+                final textStyle = wide
+                    ? Theme.of(context).textTheme.bodyLarge
+                    : Theme.of(context).textTheme.bodyMedium;
+                return value.when(
+                  data: (data) => SelectableText(data, style: textStyle),
+                  error: (e, st) => Center(
+                    child: Text('Error: $e', style: textStyle),
+                  ),
+                  loading: () => const _AiTextLoading(),
+                );
+              }),
             ],
           ),
         );
@@ -59,16 +68,23 @@ class _AiTextLoading extends StatelessWidget {
   Widget build(BuildContext context) {
     String thinkingWord =
         _thinkingWords[Random().nextInt(_thinkingWords.length)];
-    return StreamBuilder<int>(
-      stream: Stream.periodic(
-        const Duration(milliseconds: 200),
-        (i) => i,
-      ),
-      builder: (context, snapshot) {
-        int count = snapshot.data ?? 0;
-        String text = '$thinkingWord${'.' * (count % 4)}';
-        return Text(text);
-      },
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      final wide =
+          constraints.maxWidth >= Breakpoint.tablet - (2 * AiSheet._padding);
+      final textStyle = wide
+          ? Theme.of(context).textTheme.bodyLarge
+          : Theme.of(context).textTheme.bodyMedium;
+      return StreamBuilder<int>(
+        stream: Stream.periodic(
+          const Duration(milliseconds: 200),
+          (i) => i,
+        ),
+        builder: (context, snapshot) {
+          int count = snapshot.data ?? 0;
+          String text = '$thinkingWord${'.' * (count % 4)}';
+          return Text(text, style: textStyle);
+        },
+      );
+    });
   }
 }
