@@ -1,10 +1,11 @@
-import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
-import 'package:focus_browser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen_controller.dart';
-import 'package:focus_browser/src/localization/string_hardcoded.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
+import 'package:focus_browser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen_controller.dart';
+import 'package:focus_browser/src/localization/string_hardcoded.dart';
+import 'package:focus_browser/src/utils/web_utils.dart';
 import 'package:go_router/go_router.dart';
 
 class SearchEngineListTile extends ConsumerWidget {
@@ -41,7 +42,11 @@ class SearchEngineListTile extends ConsumerWidget {
                 );
               },
             )
-          : null,
+          : Image.network(
+              getFaviconUrlFromUrl(record.engine.urlTemplate),
+              errorBuilder: (context, error, stackTrace) =>
+                  const SizedBox.shrink(),
+            ),
       title: PlatformText(record.engine.name),
       trailing: _SearchEngineListTileTrailing(
         searchEngineId: record.id,

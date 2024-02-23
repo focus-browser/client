@@ -87,7 +87,6 @@ class _DefaultSearchEnginesList extends ConsumerWidget {
       return SliverToBoxAdapter(
         child: CupertinoListSection.insetGrouped(
           header: Text('Default'.hardcoded),
-          hasLeading: false,
           children: [
             for (final searchEngine in defaultSearchEngines.entries)
               Opacity(
@@ -146,7 +145,6 @@ class _CustomSearchEnginesList extends ConsumerWidget {
         return SliverToBoxAdapter(
           child: CupertinoListSection.insetGrouped(
             header: Text('Custom'.hardcoded),
-            hasLeading: false,
             children: [
               for (final searchEngine in searchEngines.entries)
                 SearchEngineListTile(
