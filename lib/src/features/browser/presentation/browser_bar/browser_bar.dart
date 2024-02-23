@@ -46,8 +46,6 @@ class BrowserBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedBrowser = ref.watch(selectedBrowserNumberProvider);
-    final progress = ref.watch(browserProgressProvider(selectedBrowser)).value;
     return Stack(
       children: [
         const Column(
@@ -56,10 +54,6 @@ class BrowserBar extends ConsumerWidget {
             _BrowserToolbar(),
           ],
         ),
-        if (progress != null && progress < 1)
-          LinearProgressIndicator(
-            value: progress,
-          )
       ],
     );
   }
@@ -196,66 +190,99 @@ class _BrowserSearchBar extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(
           left: Sizes.p16, right: Sizes.p16, top: Sizes.p12),
-      child: PlatformSearchBar(
-        controller: textController,
-        focusNode: focusNode,
-        hintText: 'Search or enter website name'.hardcoded,
-        material: (context, platform) => MaterialSearchBarData(
-          leading: const _PrefixIcon(),
-          trailing: [
-            if (canReload.value ?? false)
-              Padding(
-                padding: const EdgeInsets.all(Sizes.p12),
-                child: IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: () =>
-                      ref.read(browserRepositoryProvider).reload(browserNumber),
-                ),
-              ),
-          ],
-          onSubmitted: (query) => query.endsWith('?')
-              ? showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  showDragHandle: true,
-                  builder: (_) => Consumer(
-                    builder: (context, ref, child) => AiSheet(
-                      title: query,
-                      value: ref.watch(aiSearchProvider(query)),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          PlatformSearchBar(
+            controller: textController,
+            focusNode: focusNode,
+            hintText: 'Search or enter website name'.hardcoded,
+            material: (context, platform) => MaterialSearchBarData(
+              leading: const _PrefixIcon(),
+              trailing: [
+                if (canReload.value ?? false)
+                  Padding(
+                    padding: const EdgeInsets.all(Sizes.p12),
+                    child: IconButton(
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () => ref
+                          .read(browserRepositoryProvider)
+                          .reload(browserNumber),
                     ),
                   ),
-                )
-              : ref
-                  .read(browserBarControllerProvider.notifier)
-                  .search(browserNumber, query),
-        ),
-        cupertino: (context, platform) => CupertinoSearchBarData(
-          autocorrect: false,
-          prefixIcon: const _PrefixIcon(),
-          suffixInsets: const EdgeInsets.all(Sizes.p12),
-          suffixIcon: canReload.value ?? false
-              ? const Icon(CupertinoIcons.refresh)
-              : const Icon(CupertinoIcons.xmark_circle_fill),
-          onSuffixTap: canReload.value ?? false
-              ? () => ref.read(browserRepositoryProvider).reload(browserNumber)
-              : null,
-          onSubmitted: (query) => query.endsWith('?')
-              ? showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  showDragHandle: true,
-                  builder: (_) => Consumer(
-                    builder: (context, ref, child) => AiSheet(
-                      title: query,
-                      value: ref.watch(aiSearchProvider(query)),
-                    ),
-                  ),
-                )
-              : ref
-                  .read(browserBarControllerProvider.notifier)
-                  .search(browserNumber, query),
-        ),
+              ],
+              onSubmitted: (query) => query.endsWith('?')
+                  ? showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      showDragHandle: true,
+                      builder: (_) => Consumer(
+                        builder: (context, ref, child) => AiSheet(
+                          title: query,
+                          value: ref.watch(aiSearchProvider(query)),
+                        ),
+                      ),
+                    )
+                  : ref
+                      .read(browserBarControllerProvider.notifier)
+                      .search(browserNumber, query),
+            ),
+            cupertino: (context, platform) => CupertinoSearchBarData(
+              autocorrect: false,
+              prefixIcon: const _PrefixIcon(),
+              suffixInsets: const EdgeInsets.all(Sizes.p12),
+              suffixIcon: canReload.value ?? false
+                  ? const Icon(CupertinoIcons.refresh)
+                  : const Icon(CupertinoIcons.xmark_circle_fill),
+              onSuffixTap: canReload.value ?? false
+                  ? () =>
+                      ref.read(browserRepositoryProvider).reload(browserNumber)
+                  : null,
+              onSubmitted: (query) => query.endsWith('?')
+                  ? showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      showDragHandle: true,
+                      builder: (_) => Consumer(
+                        builder: (context, ref, child) => AiSheet(
+                          title: query,
+                          value: ref.watch(aiSearchProvider(query)),
+                        ),
+                      ),
+                    )
+                  : ref
+                      .read(browserBarControllerProvider.notifier)
+                      .search(browserNumber, query),
+            ),
+          ),
+          const _ProgressBar(),
+        ],
       ),
+    );
+  }
+}
+
+class _ProgressBar extends ConsumerWidget {
+  const _ProgressBar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final browserNumber = ref.watch(selectedBrowserNumberProvider);
+    final progress = ref.watch(browserProgressProvider(browserNumber));
+    return progress.maybeWhen(
+      data: (data) => data < 1
+          ? Padding(
+              padding:
+                  const EdgeInsets.only(left: 1.0, right: 1.0, bottom: 1.0),
+              child: LinearProgressIndicator(
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(Sizes.p64),
+                ),
+                value: data,
+              ),
+            )
+          : const SizedBox.shrink(),
+      orElse: () => const SizedBox.shrink(),
     );
   }
 }
