@@ -172,7 +172,7 @@ class _BrowserSearchBar extends ConsumerWidget {
                   ? () =>
                       ref.read(browserRepositoryProvider).reload(browserNumber)
                   : null,
-              onSubmitted: (query) => query.endsWith('?')
+              onSubmitted: (query) => query.endsWith('?') || query.endsWith('？')
                   ? showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
