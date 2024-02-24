@@ -7,15 +7,18 @@ class RemoteAiSearchRepositoryResponse {
   });
 
   final String response;
-  final List<RemoteAiSearchRepositoryResponseReference> references;
+  final List<RemoteAiSearchRepositoryResponseReference>? references;
 
   @override
   String toString() {
+    if (references == null) {
+      return response;
+    }
     String formattedString = '$response\n';
     formattedString += '### Sources\n';
-    for (var i = 0; i < references.length; i++) {
+    for (var i = 0; i < references!.length; i++) {
       formattedString +=
-          '${i + 1}. [${references[i].title}](${references[i].url})\n';
+          '${i + 1}. [${references![i].title}](${references![i].url})\n';
     }
     return formattedString;
   }
@@ -23,20 +26,22 @@ class RemoteAiSearchRepositoryResponse {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'response': response,
-      'references': references.map((x) => x.toMap()).toList(),
+      'references': references?.map((x) => x.toMap()).toList(),
     };
   }
 
   factory RemoteAiSearchRepositoryResponse.fromMap(Map<String, dynamic> map) {
     return RemoteAiSearchRepositoryResponse(
       response: map['response'] as String,
-      references: List<RemoteAiSearchRepositoryResponseReference>.from(
-        (map['references'] as List<dynamic>)
-            .map<RemoteAiSearchRepositoryResponseReference>(
-          (x) => RemoteAiSearchRepositoryResponseReference.fromMap(
-              x as Map<String, dynamic>),
-        ),
-      ),
+      references: map['references'] != null
+          ? List<RemoteAiSearchRepositoryResponseReference>.from(
+              (map['references'] as List<dynamic>)
+                  .map<RemoteAiSearchRepositoryResponseReference?>(
+                (x) => RemoteAiSearchRepositoryResponseReference.fromMap(
+                    x as Map<String, dynamic>),
+              ),
+            )
+          : null,
     );
   }
 
