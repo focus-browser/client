@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:focus_browser/src/features/ai_summary/data/ai_summary_repository.dart';
@@ -24,8 +25,8 @@ class RemoteAiSummaryRepository implements AiSummaryRepository {
     );
 
     if (httpResponse.statusCode == 200) {
-      final response =
-          RemoteAiSummaryRepositoryResponse.fromJson(httpResponse.body);
+      final response = RemoteAiSummaryRepositoryResponse.fromJson(
+          utf8.decode(httpResponse.bodyBytes));
       return response.toString();
     } else {
       throw Exception(

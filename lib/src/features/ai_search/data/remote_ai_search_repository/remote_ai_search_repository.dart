@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:focus_browser/src/features/ai_search/data/ai_search_repository.dart';
@@ -24,8 +25,8 @@ class RemoteAiSearchRepository implements AiSearchRepository {
     );
 
     if (httpResponse.statusCode == 200) {
-      final response =
-          RemoteAiSearchRepositoryResponse.fromJson(httpResponse.body);
+      final response = RemoteAiSearchRepositoryResponse.fromJson(
+          utf8.decode(httpResponse.bodyBytes));
       return response.toString();
     } else {
       throw Exception(
