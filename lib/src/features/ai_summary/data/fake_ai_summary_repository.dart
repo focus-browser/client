@@ -13,7 +13,7 @@ class FakeAiSummaryRepository implements AiSummaryRepository {
   final bool addDelay;
   final FakeAiSummaryRepositoryResponse _response =
       const FakeAiSummaryRepositoryResponse(
-    response: loremIpsum,
+    response: loremIpsumMarkdownSummary,
   );
 
   @override

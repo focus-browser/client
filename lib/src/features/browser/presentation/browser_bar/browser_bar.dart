@@ -14,6 +14,7 @@ import 'package:focus_browser/src/features/browser/presentation/browser_screen/b
 import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:focus_browser/src/features/extensions/presentation/browser_bar_extensions_button.dart';
 import 'package:focus_browser/src/localization/string_hardcoded.dart';
+import 'package:go_router/go_router.dart';
 
 final _textEditingControllerProvider =
     Provider.autoDispose<TextEditingController>((ref) {
@@ -179,6 +180,12 @@ class _BrowserSearchBar extends ConsumerWidget {
                       builder: (_) => Consumer(
                         builder: (context, ref, child) => AiSheet(
                           title: query,
+                          onTapLink: (href) {
+                            ref
+                                .read(browserBarControllerProvider.notifier)
+                                .search(browserNumber, href);
+                            context.pop();
+                          },
                           value: ref.watch(aiSearchProvider(query)),
                         ),
                       ),

@@ -11,10 +11,11 @@ class RemoteAiSearchRepositoryResponse {
 
   @override
   String toString() {
-    String formattedString = '$response\n\n';
-    formattedString += 'Sources:\n';
+    String formattedString = '$response\n';
+    formattedString += '### Sources\n';
     for (var i = 0; i < references.length; i++) {
-      formattedString += '[${i + 1}]: ${references[i].url}\n';
+      formattedString +=
+          '${i + 1}. [${references[i].title}](${references[i].url})\n';
     }
     return formattedString;
   }

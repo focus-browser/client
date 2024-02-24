@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/common/app_sizes.dart';
 import 'package:focus_browser/src/constants/breakpoint.dart';
@@ -10,10 +11,12 @@ class AiSheet extends StatelessWidget {
     super.key,
     required this.title,
     required this.value,
+    this.onTapLink,
   });
 
   final String title;
   final AsyncValue<String> value;
+  final void Function(String)? onTapLink;
   static const double _padding = Sizes.p24;
 
   @override
@@ -28,7 +31,7 @@ class AiSheet extends StatelessWidget {
           child: ListView(
             controller: scrollController,
             children: [
-              Text(title, style: Theme.of(context).textTheme.titleLarge),
+              Text(title, style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: Sizes.p16),
               LayoutBuilder(builder: (context, constraints) {
                 final wide =
@@ -37,7 +40,16 @@ class AiSheet extends StatelessWidget {
                     ? Theme.of(context).textTheme.bodyLarge
                     : Theme.of(context).textTheme.bodyMedium;
                 return value.when(
-                  data: (data) => SelectableText(data, style: textStyle),
+                  data: (data) => MarkdownBody(
+                    data: data,
+                    selectable: true,
+                    styleSheet: MarkdownStyleSheet(p: textStyle),
+                    onTapLink: (text, href, title) {
+                      if (onTapLink != null) {
+                        onTapLink!(href ?? text);
+                      }
+                    },
+                  ),
                   error: (e, st) => Center(
                     child: Text('Error: $e', style: textStyle),
                   ),

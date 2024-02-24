@@ -15,7 +15,7 @@ class FakeAiSearchRepository implements AiSearchRepository {
   final bool addDelay;
   final FakeAiSearchRepositoryResponse _response =
       const FakeAiSearchRepositoryResponse(
-    response: loremIpsum,
+    response: loremIpsumMarkdown,
     references: [
       FakeAiSearchRepositoryResponseReference(
         title: 'Lorem Ipsum',
@@ -25,6 +25,24 @@ class FakeAiSearchRepository implements AiSearchRepository {
         title: 'What does the filler text “lorem ipsum” mean?',
         url:
             'https://www.straightdope.com/21343427/what-does-the-filler-text-lorem-ipsum-mean',
+      ),
+      FakeAiSearchRepositoryResponseReference(
+        title: 'Lorem Ipsum 2',
+        url: 'https://en.wikipedia.org/wiki/Lorem_ipsum2',
+      ),
+      FakeAiSearchRepositoryResponseReference(
+        title: 'What does the filler text “lorem ipsum” mean? 2',
+        url:
+            'https://www.straightdope.com/21343427/what-does-the-filler-text-lorem-ipsum-mean2',
+      ),
+      FakeAiSearchRepositoryResponseReference(
+        title: 'Lorem Ipsum 3',
+        url: 'https://en.wikipedia.org/wiki/Lorem_ipsum3',
+      ),
+      FakeAiSearchRepositoryResponseReference(
+        title: 'What does the filler text “lorem ipsum” mean? 3',
+        url:
+            'https://www.straightdope.com/21343427/what-does-the-filler-text-lorem-ipsum-mean3',
       ),
     ],
   );
