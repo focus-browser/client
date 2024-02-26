@@ -138,72 +138,62 @@ class _CustomSearchEnginesList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final searchEngines = ref.watch(_customSearchEnginesProvider);
     final userSearchEngineId = ref.watch(_userSearchEngineIdProvider);
-    final state = ref.watch(searchEnginesListScreenControllerProvider);
 
-    if (searchEngines.isNotEmpty || state.isEditing) {
-      if (isCupertino(context)) {
-        return SliverToBoxAdapter(
-          child: CupertinoListSection.insetGrouped(
-            header: Text('Custom'.hardcoded),
-            children: [
-              for (final searchEngine in searchEngines.entries)
-                SearchEngineListTile(
+    if (isCupertino(context)) {
+      return SliverToBoxAdapter(
+        child: CupertinoListSection.insetGrouped(
+          header: Text('Custom'.hardcoded),
+          children: [
+            for (final searchEngine in searchEngines.entries)
+              SearchEngineListTile(
+                record: (id: searchEngine.key, engine: searchEngine.value),
+                isSelected: searchEngine.key == userSearchEngineId,
+                isCustom: true,
+              ),
+            CupertinoListTile(
+              leading: const Icon(CupertinoIcons.add),
+              title: Text('Add Search Engine'.hardcoded),
+              onTap: () => context.goNamed(AppRoutes.addSearchEngine.name),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return SliverPadding(
+        padding: const EdgeInsets.only(top: Sizes.p16),
+        sliver: SliverPrototypeExtentList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              if (index == 0) {
+                return ListTile(
+                  title: Text(
+                    'Custom'.hardcoded,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                );
+              }
+              index--;
+              if (index < searchEngines.length) {
+                final searchEngine = searchEngines.entries.toList()[index];
+                return SearchEngineListTile(
                   record: (id: searchEngine.key, engine: searchEngine.value),
                   isSelected: searchEngine.key == userSearchEngineId,
                   isCustom: true,
-                ),
-              if (state.isEditing)
-                CupertinoListTile(
-                  leading: const Icon(CupertinoIcons.add),
-                  title: Text('Add'.hardcoded),
-                  onTap: () => context.goNamed(AppRoutes.addSearchEngine.name),
-                ),
-            ],
+                );
+              }
+              return ListTile(
+                leading: const Icon(Icons.add),
+                title: Text('Add Search Engine'.hardcoded),
+                onTap: () => context.goNamed(AppRoutes.addSearchEngine.name),
+              );
+            },
+            childCount: searchEngines.length + 2,
           ),
-        );
-      } else {
-        return SliverPadding(
-          padding: const EdgeInsets.only(top: Sizes.p16),
-          sliver: SliverPrototypeExtentList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                if (index == 0) {
-                  return ListTile(
-                    title: Text(
-                      'Custom'.hardcoded,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  );
-                }
-                index--;
-                if (index < searchEngines.length) {
-                  final searchEngine = searchEngines.entries.toList()[index];
-                  return SearchEngineListTile(
-                    record: (id: searchEngine.key, engine: searchEngine.value),
-                    isSelected: searchEngine.key == userSearchEngineId,
-                    isCustom: true,
-                  );
-                }
-                if (state.isEditing) {
-                  ListTile(
-                    leading: const Icon(Icons.add),
-                    title: Text('Add'.hardcoded),
-                    onTap: () =>
-                        context.goNamed(AppRoutes.addSearchEngine.name),
-                  );
-                }
-                return null;
-              },
-              childCount: searchEngines.length + (state.isEditing ? 2 : 1),
-            ),
-            prototypeItem: ListTile(
-              title: Text('Google'.hardcoded),
-            ),
+          prototypeItem: ListTile(
+            title: Text('Google'.hardcoded),
           ),
-        );
-      }
-    } else {
-      return const SliverToBoxAdapter(child: SizedBox.shrink());
+        ),
+      );
     }
   }
 }
