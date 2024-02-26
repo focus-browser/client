@@ -203,8 +203,8 @@ class _BrowserSearchBar extends ConsumerWidget {
               onPressed: () {
                 final text = textController.text;
                 if (text.isEmpty || isWebAddress(text)) {
-                  focusNode.requestFocus();
                   aiSearchButtonTooltipKey.currentState?.ensureTooltipVisible();
+                  focusNode.requestFocus();
                   return;
                 }
                 if (!(text.endsWith('?') || text.endsWith('？'))) {
