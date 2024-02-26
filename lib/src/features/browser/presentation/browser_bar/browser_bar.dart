@@ -14,6 +14,7 @@ import 'package:focus_browser/src/features/browser/presentation/browser_screen/b
 import 'package:focus_browser/src/features/browser/presentation/browser_screen/browser_screen_state.dart';
 import 'package:focus_browser/src/features/extensions/presentation/browser_bar_extensions_button.dart';
 import 'package:focus_browser/src/localization/string_hardcoded.dart';
+import 'package:focus_browser/src/utils/web_utils.dart';
 import 'package:go_router/go_router.dart';
 
 final _textEditingControllerProvider =
@@ -121,83 +122,131 @@ class _BrowserSearchBar extends ConsumerWidget {
         .whenData((value) => textController.text = value ?? '');
     final focusNode = ref.watch(_focusNodeProvider);
     final canReload = ref.watch(browserCanReloadProvider(browserNumber));
+    final aiSearchButtonTooltipKey = GlobalKey<TooltipState>();
 
     return Padding(
       padding: const EdgeInsets.only(left: Sizes.p16, right: Sizes.p16),
-      child: Stack(
-        alignment: Alignment.bottomCenter,
+      child: Row(
         children: [
-          PlatformSearchBar(
-            controller: textController,
-            focusNode: focusNode,
-            hintText: 'Search or enter website name'.hardcoded,
-            material: (context, platform) => MaterialSearchBarData(
-              leading: const _PrefixIcon(),
-              trailing: [
-                if (canReload.value ?? false)
-                  Padding(
-                    padding: const EdgeInsets.all(Sizes.p12),
-                    child: IconButton(
-                      icon: const Icon(Icons.refresh),
-                      onPressed: () => ref
-                          .read(browserRepositoryProvider)
-                          .reload(browserNumber),
-                    ),
-                  ),
-              ],
-              onSubmitted: (query) => query.endsWith('?')
-                  ? showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      showDragHandle: true,
-                      builder: (_) => Consumer(
-                        builder: (context, ref, child) => AiSheet(
-                          title: query,
-                          value: ref.watch(aiSearchProvider(query)),
+          Expanded(
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                PlatformSearchBar(
+                  controller: textController,
+                  focusNode: focusNode,
+                  hintText: 'Search or enter website name'.hardcoded,
+                  material: (context, platform) => MaterialSearchBarData(
+                    leading: const _PrefixIcon(),
+                    trailing: [
+                      if (canReload.value ?? false)
+                        Padding(
+                          padding: const EdgeInsets.all(Sizes.p12),
+                          child: IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed: () => ref
+                                .read(browserRepositoryProvider)
+                                .reload(browserNumber),
+                          ),
                         ),
-                      ),
-                    )
-                  : ref
-                      .read(browserBarControllerProvider.notifier)
-                      .search(browserNumber, query),
-            ),
-            cupertino: (context, platform) => CupertinoSearchBarData(
-              autocorrect: false,
-              prefixIcon: const _PrefixIcon(),
-              suffixInsets: const EdgeInsets.all(Sizes.p12),
-              suffixIcon: canReload.value ?? false
-                  ? const Icon(CupertinoIcons.refresh)
-                  : const Icon(CupertinoIcons.xmark_circle_fill),
-              onSuffixTap: canReload.value ?? false
-                  ? () =>
-                      ref.read(browserRepositoryProvider).reload(browserNumber)
-                  : null,
-              onSubmitted: (query) => query.endsWith('?') || query.endsWith('？')
-                  ? showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      showDragHandle: true,
-                      builder: (_) => Consumer(
-                        builder: (context, ref, child) => AiSheet(
-                          title: query,
-                          onTapLink: (href) {
-                            ref
+                    ],
+                    onSubmitted: (query) =>
+                        query.endsWith('?') || query.endsWith('？')
+                            ? showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                showDragHandle: true,
+                                builder: (_) => _AiSearchSheet(query: query),
+                              )
+                            : ref
                                 .read(browserBarControllerProvider.notifier)
-                                .search(browserNumber, href);
-                            context.pop();
-                          },
-                          value: ref.watch(aiSearchProvider(query)),
-                        ),
-                      ),
-                    )
-                  : ref
-                      .read(browserBarControllerProvider.notifier)
-                      .search(browserNumber, query),
+                                .search(browserNumber, query),
+                  ),
+                  cupertino: (context, platform) => CupertinoSearchBarData(
+                    autocorrect: false,
+                    prefixIcon: const _PrefixIcon(),
+                    suffixInsets: const EdgeInsets.all(Sizes.p12),
+                    suffixIcon: canReload.value ?? false
+                        ? const Icon(CupertinoIcons.refresh)
+                        : const Icon(CupertinoIcons.xmark_circle_fill),
+                    onSuffixTap: canReload.value ?? false
+                        ? () => ref
+                            .read(browserRepositoryProvider)
+                            .reload(browserNumber)
+                        : null,
+                    onSubmitted: (query) =>
+                        query.endsWith('?') || query.endsWith('？')
+                            ? showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                showDragHandle: true,
+                                builder: (_) => _AiSearchSheet(query: query),
+                              )
+                            : ref
+                                .read(browserBarControllerProvider.notifier)
+                                .search(browserNumber, query),
+                  ),
+                ),
+                const _ProgressBar(),
+              ],
             ),
           ),
-          const _ProgressBar(),
+          Tooltip(
+            message:
+                "Enter text, then tap me and i'll search for you".hardcoded,
+            triggerMode: TooltipTriggerMode.manual,
+            key: aiSearchButtonTooltipKey,
+            preferBelow: false,
+            child: PlatformIconButton(
+              icon: const Icon(Icons.smart_toy_outlined),
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                final text = textController.text;
+                if (text.isEmpty || isWebAddress(text)) {
+                  focusNode.requestFocus();
+                  aiSearchButtonTooltipKey.currentState?.ensureTooltipVisible();
+                  return;
+                }
+                if (!(text.endsWith('?') || text.endsWith('？'))) {
+                  textController.text = '$text?';
+                }
+                final query = textController.text;
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  showDragHandle: true,
+                  builder: (_) => _AiSearchSheet(query: query),
+                );
+              },
+            ),
+          ),
         ],
       ),
+    );
+  }
+}
+
+class _AiSearchSheet extends ConsumerWidget {
+  const _AiSearchSheet({
+    required this.query,
+  });
+
+  final String query;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final browserNumber = ref.watch(selectedBrowserNumberProvider);
+    return AiSheet(
+      title: query,
+      onTapLink: (href) {
+        ref
+            .read(browserBarControllerProvider.notifier)
+            .search(browserNumber, href);
+        if (context.mounted) {
+          context.pop();
+        }
+      },
+      value: ref.watch(aiSearchProvider(query)),
     );
   }
 }
