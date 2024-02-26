@@ -13,4 +13,8 @@ const kDefaultSearchEngines = {
     name: 'DuckDuckGo',
     urlTemplate: 'https://duckduckgo.com/?q=%s',
   ),
+  '20dac361-4cc3-4772-b740-6de68465c3e5': SearchEngine(
+    name: 'Ecosia',
+    urlTemplate: 'https://www.ecosia.org/search?q=%s',
+  ),
 };
