@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:focus_browser/src/common_widgets/image_network.dart';
 import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
 import 'package:focus_browser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen_controller.dart';
 import 'package:focus_browser/src/localization/string_hardcoded.dart';
@@ -42,10 +43,9 @@ class SearchEngineListTile extends ConsumerWidget {
                 );
               },
             )
-          : Image.network(
-              getFaviconUrlFromUrl(record.engine.urlTemplate),
-              errorBuilder: (context, error, stackTrace) =>
-                  const SizedBox.shrink(),
+          : ImageNetwork(
+              url: getFaviconUrlFromUrl(record.engine.urlTemplate),
+              errorWidget: const SizedBox.shrink(),
             ),
       title: PlatformText(record.engine.name),
       trailing: _SearchEngineListTileTrailing(
