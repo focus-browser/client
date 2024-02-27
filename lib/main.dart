@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/app.dart';
@@ -44,6 +45,7 @@ void main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
+  PlatformInAppWebViewController.debugLoggingSettings.enabled = false;
 
   final searchEnginesRepository =
       await SembastSearchEnginesRepository.makeDefault();
