@@ -67,7 +67,7 @@ class InAppWebViewBrowserRepository extends BrowserRepository {
       uri = Uri.parse("http://$url");
     }
     _states.value[id]?.webViewController
-        ?.loadUrl(urlRequest: URLRequest(url: uri));
+        ?.loadUrl(urlRequest: URLRequest(url: WebUri.uri(uri)));
   }
 
   @override

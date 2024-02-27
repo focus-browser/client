@@ -26,14 +26,12 @@ class BrowserWidget extends ConsumerWidget {
       child: Opacity(
         opacity: currentUrlIsEmpty ? 0.0 : 1.0,
         child: InAppWebView(
-          initialOptions: InAppWebViewGroupOptions(
-            crossPlatform: InAppWebViewOptions(
-              incognito: true,
-            ),
-            ios: IOSInAppWebViewOptions(
-              maximumZoomScale: 5.0,
-              allowsInlineMediaPlayback: true,
-            ),
+          initialSettings: InAppWebViewSettings(
+            // Cross-platform settings
+            incognito: true,
+            // iOS settings
+            maximumZoomScale: 5.0,
+            allowsInlineMediaPlayback: true,
           ),
           onWebViewCreated: (webViewController) => ref
               .read(inAppWebViewBrowserRepositoryProvider)
@@ -44,8 +42,6 @@ class BrowserWidget extends ConsumerWidget {
           onLoadStop: (controller, url) => ref
               .read(inAppWebViewBrowserRepositoryProvider)
               .updateCurrentUrl(browserNumber, url),
-          onLoadError: (controller, url, code, message) => debugPrint(
-              "browserNumber: $browserNumber, url: $url, code: $code, message: $message"),
           onUpdateVisitedHistory: (controller, url, androidIsReload) => ref
               .read(inAppWebViewBrowserRepositoryProvider)
               .updateCurrentUrl(browserNumber, url),
