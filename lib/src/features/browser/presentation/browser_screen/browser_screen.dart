@@ -42,12 +42,16 @@ class _BrowserScreen extends ConsumerWidget {
           children: [
             if (isBarVisible && wide) const BrowserBar(),
             Expanded(
-              child: Stack(
-                children: [
-                  const _BrowserBackground(),
-                  const _BrowserWindows(),
-                  if (!isBarVisible) const _BrowserBarUnhideButton(),
-                ],
+              child: Listener(
+                // Unfocus the search bar text field when the user taps the browser area
+                onPointerDown: (_) => FocusScope.of(context).unfocus(),
+                child: Stack(
+                  children: [
+                    const _BrowserBackground(),
+                    const _BrowserWindows(),
+                    if (!isBarVisible) const _BrowserBarUnhideButton(),
+                  ],
+                ),
               ),
             ),
             if (isBarVisible && !wide)
