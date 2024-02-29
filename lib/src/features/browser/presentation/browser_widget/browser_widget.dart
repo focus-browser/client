@@ -33,21 +33,32 @@ class BrowserWidget extends ConsumerWidget {
             maximumZoomScale: 5.0,
             allowsInlineMediaPlayback: true,
           ),
-          onWebViewCreated: (webViewController) => ref
-              .read(inAppWebViewBrowserRepositoryProvider)
-              .setController(browserNumber, webViewController),
-          onLoadStart: (controller, url) => ref
-              .read(inAppWebViewBrowserRepositoryProvider)
-              .updateCurrentUrl(browserNumber, url),
-          onLoadStop: (controller, url) => ref
-              .read(inAppWebViewBrowserRepositoryProvider)
-              .updateCurrentUrl(browserNumber, url),
-          onUpdateVisitedHistory: (controller, url, androidIsReload) => ref
-              .read(inAppWebViewBrowserRepositoryProvider)
-              .updateCurrentUrl(browserNumber, url),
-          onProgressChanged: (controller, progress) => ref
-              .read(inAppWebViewBrowserRepositoryProvider)
-              .updateLoadingProgress(browserNumber, progress / 100),
+          onWebViewCreated: (webViewController) => context.mounted
+              ? ref
+                  .read(inAppWebViewBrowserRepositoryProvider)
+                  .setController(browserNumber, webViewController)
+              : null,
+          onLoadStart: (controller, url) => context.mounted
+              ? ref
+                  .read(inAppWebViewBrowserRepositoryProvider)
+                  .updateCurrentUrl(browserNumber, url)
+              : null,
+          onLoadStop: (controller, url) => context.mounted
+              ? ref
+                  .read(inAppWebViewBrowserRepositoryProvider)
+                  .updateCurrentUrl(browserNumber, url)
+              : null,
+          onUpdateVisitedHistory: (controller, url, androidIsReload) =>
+              context.mounted
+                  ? ref
+                      .read(inAppWebViewBrowserRepositoryProvider)
+                      .updateCurrentUrl(browserNumber, url)
+                  : null,
+          onProgressChanged: (controller, progress) => context.mounted
+              ? ref
+                  .read(inAppWebViewBrowserRepositoryProvider)
+                  .updateLoadingProgress(browserNumber, progress / 100)
+              : null,
         ),
       ),
     );
