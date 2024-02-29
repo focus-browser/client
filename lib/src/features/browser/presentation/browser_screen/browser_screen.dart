@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/common/app_sizes.dart';
@@ -42,10 +43,9 @@ class _BrowserScreen extends ConsumerWidget {
           children: [
             if (isBarVisible && wide) const BrowserBar(),
             Expanded(
-              child: Listener(
+              child: KeyboardDismissOnTap(
                 // Unfocus the search bar text field when the user taps the browser area
-                onPointerDown: (_) =>
-                    FocusScope.of(context).requestFocus(FocusNode()),
+                dismissOnCapturedTaps: true,
                 child: Stack(
                   children: [
                     const _BrowserBackground(),

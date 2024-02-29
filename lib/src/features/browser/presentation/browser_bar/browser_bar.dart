@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:focus_browser/src/common/app_sizes.dart';
+import 'package:focus_browser/src/common/focus_node_notifier.dart';
+import 'package:focus_browser/src/common/keyboard_visibility_notifier.dart';
 import 'package:focus_browser/src/common_widgets/ai_sheet.dart';
 import 'package:focus_browser/src/common_widgets/responsive_center.dart';
 import 'package:focus_browser/src/constants/breakpoint.dart';
@@ -20,34 +22,37 @@ import 'package:go_router/go_router.dart';
 final _textEditingControllerProvider =
     Provider.autoDispose<TextEditingController>((ref) {
   final textEditingController = TextEditingController();
-  ref.onDispose(
-    () => textEditingController.dispose(),
-  );
+  ref.onDispose(() => textEditingController.dispose());
+
+  final browserNumber = ref.watch(selectedBrowserNumberProvider);
+  ref.watch(browserCurrentUrlProvider(browserNumber)).whenData((value) {
+    textEditingController.text = value ?? '';
+  });
   return textEditingController;
 });
 
-final _focusNodeProvider = Provider.autoDispose<FocusNode>((ref) {
-  final textController = ref.watch(_textEditingControllerProvider);
+final _searchBarFocusNodeProvider = Provider.autoDispose<FocusNode>((ref) {
   final focusNode = FocusNode();
   ref.onDispose(() => focusNode.dispose());
-  focusNode.addListener(() {
-    if (focusNode.hasFocus) {
-      textController.selection = TextSelection(
-        baseOffset: 0,
-        extentOffset: textController.text.length,
-      );
-    }
-  });
   return focusNode;
 });
 
-class BrowserBar extends ConsumerWidget {
+final _searchBarIsFocusedProvider =
+    StateNotifierProvider.autoDispose<FocusNodeNotifier, bool>((ref) {
+  final focusNode = ref.watch(_searchBarFocusNodeProvider);
+  final searchBarFocusNotifier = FocusNodeNotifier(
+    focusNode: focusNode,
+  );
+  return searchBarFocusNotifier;
+});
+
+class BrowserBar extends StatelessWidget {
   const BrowserBar({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, contraints) {
       final wide = contraints.maxWidth >= Breakpoint.tablet;
       if (wide) {
@@ -87,24 +92,44 @@ class _BrowserBarHorizontal extends StatelessWidget {
   }
 }
 
-class _BrowserBarVertical extends StatelessWidget {
+class _BrowserBarVertical extends ConsumerWidget {
   const _BrowserBarVertical();
 
   @override
-  Widget build(BuildContext context) {
-    return const Column(
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Rebuild according to keyboard visibility changes only.
+    // Read the value of SearchBar's FocusNode directly.
+    // This solves the problem of when SearchBar loses focus but the keyboard
+    // is still visible (has yet to be dismissed) which causes the SearchBar
+    // to be disposed of.
+    final isKeyboardVisible = ref.watch(keyboardVisibilityProvider);
+    final isSearchBarFocused = ref.watch(_searchBarFocusNodeProvider).hasFocus;
+    return Column(
       children: [
-        _BrowserSearchBar(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            BrowserBarButtonBack(),
-            BrowserBarButtonForward(),
-            BrowserBarButtonShare(),
-            BrowserBarButtonClear(),
-            BrowserBarButtonMore(),
-          ],
-        ),
+        if (!isKeyboardVisible || isSearchBarFocused) const _BrowserSearchBar(),
+        const _BrowserBarToolbarRow(),
+      ],
+    );
+  }
+}
+
+class _BrowserBarToolbarRow extends ConsumerWidget {
+  const _BrowserBarToolbarRow();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isKeyboardVisible = ref.watch(keyboardVisibilityProvider);
+    if (isKeyboardVisible) {
+      return const SizedBox(height: Sizes.p4);
+    }
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        BrowserBarButtonBack(),
+        BrowserBarButtonForward(),
+        BrowserBarButtonShare(),
+        BrowserBarButtonClear(),
+        BrowserBarButtonMore(),
       ],
     );
   }
@@ -117,12 +142,16 @@ class _BrowserSearchBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final browserNumber = ref.watch(selectedBrowserNumberProvider);
     final textController = ref.watch(_textEditingControllerProvider);
-    ref
-        .watch(browserCurrentUrlProvider(browserNumber))
-        .whenData((value) => textController.text = value ?? '');
-    final focusNode = ref.watch(_focusNodeProvider);
+    final focusNode = ref.watch(_searchBarFocusNodeProvider);
     final canReload = ref.watch(browserCanReloadProvider(browserNumber));
     final aiSearchButtonTooltipKey = GlobalKey<TooltipState>();
+    final isSearchBarFocused = ref.watch(_searchBarIsFocusedProvider);
+    if (isSearchBarFocused) {
+      textController.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: textController.text.length,
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.only(left: Sizes.p16, right: Sizes.p16),
@@ -164,16 +193,26 @@ class _BrowserSearchBar extends ConsumerWidget {
                   ),
                   cupertino: (context, platform) => CupertinoSearchBarData(
                     autocorrect: false,
-                    prefixIcon: const _PrefixIcon(),
-                    suffixInsets: const EdgeInsets.all(Sizes.p12),
-                    suffixIcon: canReload.value ?? false
-                        ? const Icon(CupertinoIcons.refresh)
-                        : const Icon(CupertinoIcons.xmark_circle_fill),
-                    onSuffixTap: canReload.value ?? false
-                        ? () => ref
+                    padding: const EdgeInsets.only(
+                      top: Sizes.p12,
+                      bottom: Sizes.p12,
+                    ),
+                    prefixInsets: EdgeInsets.zero,
+                    prefixIcon: isSearchBarFocused
+                        ? const SizedBox(width: Sizes.p16)
+                        : const _PrefixIcon(),
+                    suffixInsets: const EdgeInsets.only(
+                      left: Sizes.p8,
+                      right: Sizes.p12,
+                    ),
+                    suffixIcon: isSearchBarFocused
+                        ? const Icon(CupertinoIcons.xmark_circle_fill)
+                        : const Icon(CupertinoIcons.refresh),
+                    onSuffixTap: isSearchBarFocused
+                        ? null
+                        : () => ref
                             .read(browserRepositoryProvider)
-                            .reload(browserNumber)
-                        : null,
+                            .reload(browserNumber),
                     onSubmitted: (query) =>
                         query.endsWith('?') || query.endsWith('？')
                             ? showModalBottomSheet(
