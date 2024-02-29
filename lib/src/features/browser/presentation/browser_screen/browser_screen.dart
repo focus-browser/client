@@ -44,7 +44,8 @@ class _BrowserScreen extends ConsumerWidget {
             Expanded(
               child: Listener(
                 // Unfocus the search bar text field when the user taps the browser area
-                onPointerDown: (_) => FocusScope.of(context).unfocus(),
+                onPointerDown: (_) =>
+                    FocusScope.of(context).requestFocus(FocusNode()),
                 child: Stack(
                   children: [
                     const _BrowserBackground(),
