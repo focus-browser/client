@@ -54,9 +54,11 @@ class BrowserBarButtonShare extends ConsumerWidget {
     return PlatformIconButton(
       icon: Icon(context.platformIcons.share),
       onPressed: currentUrl.value != null
-          ? () => ref
-              .read(browserBarControllerProvider.notifier)
-              .shareCurrentUrl(browserNumber)
+          ? () {
+              final box = context.findRenderObject() as RenderBox?;
+              ref.read(browserBarControllerProvider.notifier).shareCurrentUrl(
+                  browserNumber, box!.localToGlobal(Offset.zero) & box.size);
+            }
           : null,
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:focus_browser/src/features/browser/data/browser_repository.dart';
 import 'package:focus_browser/src/features/share/data/share_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,10 +13,10 @@ class ShareService {
   final BrowserRepository browserRepository;
   final ShareRepository shareRepository;
 
-  Future<void> shareCurrentUrl(BrowserId id) async {
+  Future<void> shareCurrentUrl(BrowserId id, [Rect? sharePositionOrigin]) async {
     final currentUrl = await browserRepository.fetchCurrentUrl(id);
     if (currentUrl != null) {
-      await shareRepository.share(currentUrl);
+      await shareRepository.share(currentUrl, sharePositionOrigin);
     }
   }
 }
