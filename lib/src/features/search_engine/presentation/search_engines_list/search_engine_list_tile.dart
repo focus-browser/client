@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:focus_browser/src/common/app_sizes.dart';
 import 'package:focus_browser/src/common_widgets/image_network.dart';
 import 'package:focus_browser/src/features/search_engine/domain/search_engine.dart';
 import 'package:focus_browser/src/features/search_engine/presentation/search_engines_list/search_engines_list_screen_controller.dart';
@@ -25,28 +26,32 @@ class SearchEngineListTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(searchEnginesListScreenControllerProvider);
     return PlatformListTile(
-      leading: isCustom && state.isEditing
-          ? PlatformIconButton(
-              padding: EdgeInsets.zero,
-              icon: Icon(
-                context.platformIcons.removeCircledSolid,
-                color: isCupertino(context)
-                    ? CupertinoColors.systemRed
-                    : Colors.red,
+      leading: SizedBox(
+        width: Sizes.p32,
+        height: Sizes.p32,
+        child: isCustom && state.isEditing
+            ? PlatformIconButton(
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  context.platformIcons.removeCircledSolid,
+                  color: isCupertino(context)
+                      ? CupertinoColors.systemRed
+                      : Colors.red,
+                ),
+                onPressed: () {
+                  showPlatformDialog(
+                    context: context,
+                    builder: (context) => _SearchEngineListTileDeleteDialog(
+                      record: record,
+                    ),
+                  );
+                },
+              )
+            : ImageNetwork(
+                url: getFaviconUrlFromUrl(record.engine.urlTemplate),
+                errorWidget: const SizedBox.shrink(),
               ),
-              onPressed: () {
-                showPlatformDialog(
-                  context: context,
-                  builder: (context) => _SearchEngineListTileDeleteDialog(
-                    record: record,
-                  ),
-                );
-              },
-            )
-          : ImageNetwork(
-              url: getFaviconUrlFromUrl(record.engine.urlTemplate),
-              errorWidget: const SizedBox.shrink(),
-            ),
+      ),
       title: PlatformText(record.engine.name),
       trailing: _SearchEngineListTileTrailing(
         searchEngineId: record.id,
