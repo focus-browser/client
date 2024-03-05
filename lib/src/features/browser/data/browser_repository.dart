@@ -51,6 +51,7 @@ final browserCanGoForwardProvider =
   (ref, id) => ref.watch(browserRepositoryProvider).watchCanGoForward(id),
 );
 
+// TODO: remove if not in use
 final browserCanReloadProvider =
     StreamProvider.family.autoDispose<bool, BrowserId>(
   (ref, id) => ref.watch(browserRepositoryProvider).watchCanReload(id),

@@ -143,7 +143,6 @@ class _BrowserSearchBar extends ConsumerWidget {
     final browserNumber = ref.watch(selectedBrowserNumberProvider);
     final textController = ref.watch(_textEditingControllerProvider);
     final focusNode = ref.watch(_searchBarFocusNodeProvider);
-    final canReload = ref.watch(browserCanReloadProvider(browserNumber));
     final aiSearchButtonTooltipKey = GlobalKey<TooltipState>();
     final isSearchBarFocused = ref.watch(_searchBarIsFocusedProvider);
     if (isSearchBarFocused) {
@@ -166,18 +165,36 @@ class _BrowserSearchBar extends ConsumerWidget {
                   focusNode: focusNode,
                   hintText: 'Search or enter website name'.hardcoded,
                   material: (context, platform) => MaterialSearchBarData(
-                    leading: const _PrefixIcon(),
+                    leading: isSearchBarFocused
+                        ? const SizedBox(width: Sizes.p16)
+                        : const _PrefixIcon(),
+                    elevation: const MaterialStatePropertyAll(0),
+                    shape: MaterialStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(Sizes.p8),
+                      ),
+                    ),
+                    padding: const MaterialStatePropertyAll(
+                      EdgeInsets.zero,
+                    ),
+                    constraints: const BoxConstraints(
+                      minHeight: Sizes.p48,
+                      maxHeight: Sizes.p48,
+                    ),
+                    backgroundColor:
+                        MaterialStateProperty.all(Theme.of(context).hoverColor),
                     trailing: [
-                      if (canReload.value ?? false)
-                        Padding(
-                          padding: const EdgeInsets.all(Sizes.p12),
-                          child: IconButton(
-                            icon: const Icon(Icons.refresh),
-                            onPressed: () => ref
-                                .read(browserRepositoryProvider)
-                                .reload(browserNumber),
-                          ),
-                        ),
+                      isSearchBarFocused
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () => textController.clear(),
+                            )
+                          : IconButton(
+                              icon: const Icon(Icons.refresh),
+                              onPressed: () => ref
+                                  .read(browserRepositoryProvider)
+                                  .reload(browserNumber),
+                            ),
                     ],
                     onSubmitted: (query) =>
                         query.endsWith('?') || query.endsWith('？')
