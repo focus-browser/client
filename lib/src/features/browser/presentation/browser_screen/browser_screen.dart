@@ -117,7 +117,7 @@ class _SecondaryBrowserWidget extends ConsumerWidget {
   });
 
   final BrowserId browserId;
-  final double dragHandleSize = Sizes.p48;
+  final double dragHandleSize = Sizes.p32;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
