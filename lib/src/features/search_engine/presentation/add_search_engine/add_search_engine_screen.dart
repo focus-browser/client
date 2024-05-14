@@ -42,15 +42,13 @@ class AddSearchEngineScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: SafeArea(
+      body: const SafeArea(
         child: ResponsiveCenter(
           maxContentWidth: Breakpoint.tablet,
-          child: Column(
-            children: [
-              const _SearchEngineNameField(),
-              if (isMaterial(context))
-                const Padding(padding: EdgeInsets.only(top: Sizes.p24)),
-              const _SearchEngineUrlField(),
+          child: CustomScrollView(
+            slivers: [
+              _SearchEngineNameField(),
+              _SearchEngineUrlField(),
             ],
           ),
         ),
@@ -67,44 +65,49 @@ class _SearchEngineNameField extends ConsumerWidget {
     final state = ref.watch(addSearchEngineScreenControllerProvider);
 
     if (isCupertino(context)) {
-      return CupertinoListSection.insetGrouped(
-        header: Text('Name'.hardcoded),
-        hasLeading: false,
-        children: [
-          CupertinoTextField(
-            decoration: null,
-            padding: const EdgeInsets.all(10.0),
-            autocorrect: false,
-            enabled: !state.value.isLoading,
-            placeholder: 'Search engine name'.hardcoded,
-            onChanged: (value) => ref
-                .read(addSearchEngineScreenControllerProvider.notifier)
-                .setName(value),
-          ),
-        ],
-      );
-    } else {
-      return Column(
-        children: [
-          ListTile(
-            title: Text(
-              'Name'.hardcoded,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
-          ListTile(
-            title: TextField(
+      return SliverToBoxAdapter(
+        child: CupertinoListSection.insetGrouped(
+          header: Text('Name'.hardcoded),
+          hasLeading: false,
+          children: [
+            CupertinoTextField(
+              decoration: null,
+              padding: const EdgeInsets.all(10.0),
               autocorrect: false,
               enabled: !state.value.isLoading,
-              decoration: InputDecoration(
-                hintText: 'Search engine name'.hardcoded,
-              ),
+              placeholder: 'Search engine name'.hardcoded,
               onChanged: (value) => ref
                   .read(addSearchEngineScreenControllerProvider.notifier)
                   .setName(value),
             ),
-          ),
-        ],
+          ],
+        ),
+      );
+    } else {
+      return SliverPadding(
+        padding: const EdgeInsets.only(top: Sizes.p24),
+        sliver: SliverList.list(
+          children: [
+            ListTile(
+              title: Text(
+                'Name'.hardcoded,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            ListTile(
+              title: TextField(
+                autocorrect: false,
+                enabled: !state.value.isLoading,
+                decoration: InputDecoration(
+                  hintText: 'Search engine name'.hardcoded,
+                ),
+                onChanged: (value) => ref
+                    .read(addSearchEngineScreenControllerProvider.notifier)
+                    .setName(value),
+              ),
+            ),
+          ],
+        ),
       );
     }
   }
@@ -118,25 +121,27 @@ class _SearchEngineUrlField extends ConsumerWidget {
     final state = ref.watch(addSearchEngineScreenControllerProvider);
 
     if (isCupertino(context)) {
-      return CupertinoListSection.insetGrouped(
-        header: Text('URL Template'.hardcoded),
-        hasLeading: false,
-        children: [
-          CupertinoTextField(
-            decoration: null,
-            padding: const EdgeInsets.all(10.0),
-            keyboardType: TextInputType.url,
-            autocorrect: false,
-            enabled: !state.value.isLoading,
-            placeholder: '%s in place of query'.hardcoded,
-            onChanged: (value) => ref
-                .read(addSearchEngineScreenControllerProvider.notifier)
-                .setUrl(value),
-          ),
-        ],
+      return SliverToBoxAdapter(
+        child: CupertinoListSection.insetGrouped(
+          header: Text('URL Template'.hardcoded),
+          hasLeading: false,
+          children: [
+            CupertinoTextField(
+              decoration: null,
+              padding: const EdgeInsets.all(10.0),
+              keyboardType: TextInputType.url,
+              autocorrect: false,
+              enabled: !state.value.isLoading,
+              placeholder: '%s in place of query'.hardcoded,
+              onChanged: (value) => ref
+                  .read(addSearchEngineScreenControllerProvider.notifier)
+                  .setUrl(value),
+            ),
+          ],
+        ),
       );
     } else {
-      return Column(
+      return SliverList.list(
         children: [
           ListTile(
             title: Text(
